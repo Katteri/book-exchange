@@ -16,6 +16,15 @@
 @import url(form/__input/form__input.css);
 @import url(input/input.css);
 @import url(form/__container/form__container.css);
-@import url(log-in-form/log-in-form.css);
 @import url(form/form_hidden.css);
-@import url(sign-in-form/sign-in-form.css);
+@import url(header/header.css);
+@import url(header/__text/header__text.css);
+@import url(navigation/navigation.css);
+@import url(text/text_navigation.css);
+@import url(profile/profile.css);
+@import url(profile/__header/profile__header.css);
+@import url(profile/__items/profile__items.css);
+@import url(text/text_right.css);
+@import url(profile/__contact/profile__contact.css);
+@import url(profile/__statistics/profile__statistics.css);
+@import url(button/button_exit.css);
