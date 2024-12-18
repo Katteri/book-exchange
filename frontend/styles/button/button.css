@@ -1,0 +1,15 @@
+.button {
+  font-family: racama;
+  font-size: 1.2vw;
+  padding-top: .4vw;
+  color: white;
+  background-color: black;
+  border: none;
+  border-radius: 2vw;
+  cursor: pointer;
+}
+
+.button:hover {
+  transition: background-color .3s ease-out;
+  background-color: orange;
+}

@@ -1,0 +1,8 @@
+.form__elements {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: 60%;
+  width: 80%;
+  margin: 0 auto;
+}

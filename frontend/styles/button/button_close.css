@@ -1,0 +1,13 @@
+.button_close {
+  font-family: lepka;
+  width: 3vw;
+  height: 3vw;
+  padding-top: .2vw;
+  position: absolute;
+  right: -.7vw;
+  top: -.7vw;
+}
+
+.button_close:hover {
+  background-color: brown;
+}

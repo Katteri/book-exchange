@@ -1,0 +1,5 @@
+.text_auth {
+  grid-area: text;
+  align-self: self-start;
+  padding-top: 1vw;
+}

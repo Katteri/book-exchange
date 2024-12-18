@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Обмен книгами</title>
+    <link rel="stylesheet" href="../styles/style.css">
+</head>
+<body>
+    <div class="page">
+      <header class="auth-header">
+        <div class="auth-content">
+          <h1 class="auth-header__text">Обмен<br>книгaми</h1>
+          <p class="text text_auth">Войдите или зарегистрируйтесь</p>
+          <button class="button button_log-in" id="open-log-in">Вход</button>
+          <button class="button button_sign-in" id="open-sign-in">Регистрация</button>
+        </div>
+      </header>
+      <section class="form form_hidden" id="form_log-in">
+        <div class="form__container" id="log-in-form"> 
+          <button class="button button_close" id="close_log-in">x</button>
+          <h2 class="form__header">Вход</h2>
+          <form id="log-in" class="form__elements">
+            <label class="form__input">
+              <span class="text">Логин</span>
+              <input type="text" class="input" autocomplete="nickname" maxlength="30" required/>
+            </label>
+            <label class="form__input">
+              <span class="text">Пароль</span>
+              <input type="password" class="input" autocomplete="current-password" maxlength="40" required/>
+            </label>
+            <button type="submit" class="button button_submit">войти</button>
+          </form>
+        </div>
+      </section>
+      <section class="form form_hidden" id="form_sign-in">
+        <div class="form__container" id="sign-in-form">
+          <button class="button button_close" id="close_sign-in">x</button>
+          <h2 class="form__header">Регистрaция</h2>
+          <form id="sign-in" class="form__elements">
+            <label class="form__input">
+              <span class="text">Имя пользователя</span>
+              <input type="text" class="input" autocomplete="nickname" maxlength="40" required/>
+            </label>
+            <label class="form__input">
+              <span class="text">Имя</span>
+              <input type="text" class="input" autocomplete="given-name" maxlength="40"/>
+            </label>
+            <label class="form__input">
+              <span class="text">Фамилия</span>
+              <input type="text" class="input" autocomplete="family-name" maxlength="40"/>
+            </label>
+            <label class="form__input">
+              <span class="text">Страна</span>
+              <input type="text" class="input" autocomplete="country-name" maxlength="40"/>
+            </label>
+            <label class="form__input">
+              <span class="text">Город</span>
+              <input type="text" class="input" autocomplete="off" maxlength="40"/>
+            </label>
+            <label class="form__input">
+              <span class="text">E-mail</span>
+              <input id="email" class="input" type="email" autocomplete="on" required>
+            </label>
+            <label class="form__input">
+              <span class="text">Пароль</span>
+              <input type="password" class="input" autocomplete="new-password" maxlength="40" required/>
+            </label>
+            <button type="submit" class="button button_submit">зарегистрироваться</button>
+          </form>
+        </div>  
+      </section>
+    </div>
+    <script src="../scripts/index.js"></script>
+</body>
+</html>
