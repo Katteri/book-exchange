@@ -1,0 +1,4 @@
+.section_exchange {
+  display: flex;
+  flex-direction: column;
+}

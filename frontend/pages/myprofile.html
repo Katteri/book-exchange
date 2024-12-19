@@ -30,12 +30,17 @@
           <p class="text">Всего обменов: х</p>
         </div>
       </div>
-      <button class="button button_exit">выйти из профиля</button>
+      <div class="profile__buttons">
+        <button class="button button_add-exchange" id="open_add-exchange">добавить обмен</button>
+        <button class="button button_exit">выйти из профиля</button>
+      </div>
+    </section>
+    
     </section>
     <section class="section">
       <div class="profile__section-header">
         <h2 class="text text_header">В поискaх</h2>
-        <button class="button button_add">добавить книгу</button>
+        <button class="button button_add" id="open_add-wanted">добавить книгу</button>
       </div>
       <div class="book-container">
         <div class="card">
@@ -52,72 +57,11 @@
           <p class="text">1925</p>
           <button class="button button_delete">удалить</button>
         </div>
-
-        <div class="card">
-          <h4 class="card__title">Собачье сердце</h4>
-          <div class="card__system">
-            <div>
-              <p class="card__isbn">ISBN: 932-392323-323-3</p>
-              <p class="card__series">Эксклюзивная классика</p>
-            </div>
-            <p class="card__language">RU</p>
-          </div>
-          <p class="text">Булгаков Михаил Афанасьевич</p>
-          <p class="text"></p>
-          <p class="text"></p>
-          <button class="button button_delete">удалить</button>
-        </div>
-
-        <div class="card">
-          <h4 class="card__title">Собачье сердце</h4>
-          <div class="card__system">
-            <div>
-              <p class="card__isbn">ISBN: 932-392323-323-3</p>
-              <p class="card__series"></p>
-            </div>
-            <p class="card__language">RU</p>
-          </div>
-          <p class="text">Булгаков Михаил Афанасьевич</p>
-          <p class="text">Роман</p>
-          <p class="text">1925</p>
-          <button class="button button_delete">удалить</button>
-        </div>
-
-        <div class="card">
-          <h4 class="card__title">Собачье сердце</h4>
-          <div class="card__system">
-            <div>
-              <p class="card__isbn">ISBN: 932-392323-323-3</p>
-              <p class="card__series">Эксклюзивная классика</p>
-            </div>
-            <p class="card__language">RU</p>
-          </div>
-          <p class="text">Булгаков Михаил Афанасьевич</p>
-          <p class="text">Роман</p>
-          <p class="text">1925</p>
-          <button class="button button_delete">удалить</button>
-        </div>
-
-        <div class="card">
-          <h4 class="card__title">Собачье сердце</h4>
-          <div class="card__system">
-            <div>
-              <p class="card__isbn">ISBN: 932-392323-323-3</p>
-              <p class="card__series">Эксклюзивная классика</p>
-            </div>
-            <p class="card__language">RU</p>
-          </div>
-          <p class="text">Булгаков Михаил Афанасьевич</p>
-          <p class="text">Роман</p>
-          <p class="text"></p>
-          <button class="button button_delete">удалить</button>
-        </div>
-      </div>
     </section>
     <section class="section">
       <div class="profile__section-header">
         <h2 class="text text_header">Мои книги</h2>
-        <button class="button button_add">добавить книгу</button>
+        <button class="button button_add" id="open_add-mybook">добавить книгу</button>
       </div>
       <div class="book-container">
         <div class="card">
@@ -135,65 +79,100 @@
           <button class="button button_delete">удалить</button>
         </div>
 
-        <div class="card">
-          <h4 class="card__title">Собачье сердце</h4>
-          <div class="card__system">
-            <div>
-              <p class="card__isbn">ISBN: 932-392323-323-3</p>
-              <p class="card__series">Эксклюзивная классика</p>
-            </div>
-            <p class="card__language">RU</p>
-          </div>
-          <p class="text">Булгаков Михаил Афанасьевич</p>
-          <p class="text"></p>
-          <p class="text"></p>
-          <button class="button button_delete">удалить</button>
-        </div>
+      </div>
+    </section>
 
-        <div class="card">
-          <h4 class="card__title">Собачье сердце</h4>
-          <div class="card__system">
-            <div>
-              <p class="card__isbn">ISBN: 932-392323-323-3</p>
-              <p class="card__series"></p>
-            </div>
-            <p class="card__language">RU</p>
-          </div>
-          <p class="text">Булгаков Михаил Афанасьевич</p>
-          <p class="text">Роман</p>
-          <p class="text">1925</p>
-          <button class="button button_delete">удалить</button>
-        </div>
+    <section class="form form_hidden" id="form_add-exchange">
+      <div class="form__container">
+        <button class="button button_close" id="close_add-exchange">x</button>
+        <h2 class="form__header">Новый обмен</h2>
+        <form id="log-in" class="form__elements">
+          <label class="form__input">
+            <span class="text">Имя пользователя,<br> с которым был обмен</span>
+            <input type="text" class="input" maxlength="30" required/>
+          </label>
+          <label class="form__input">
+            <span class="text">ISBN книги</span>
+            <input type="text" class="input" maxlength="17"/>
+          </label>
+          <button type="submit" class="button button_submit">добавить</button>
+        </form>
+      </div>
+    </section>
 
-        <div class="card">
-          <h4 class="card__title">Собачье сердце</h4>
-          <div class="card__system">
-            <div>
-              <p class="card__isbn">ISBN: 932-392323-323-3</p>
-              <p class="card__series">Эксклюзивная классика</p>
-            </div>
-            <p class="card__language">RU</p>
-          </div>
-          <p class="text">Булгаков Михаил Афанасьевич</p>
-          <p class="text">Роман</p>
-          <p class="text">1925</p>
-          <button class="button button_delete">удалить</button>
-        </div>
+    <section class="form form_hidden" id="form_add-wanted">
+      <div class="form__container">
+        <button class="button button_close" id="close_add-wanted">x</button>
+        <h2 class="form__header">В поискaх книги</h2>
+        <form id="log-in" class="form__elements">
+          <label class="form__input">
+            <span class="text">Название</span>
+            <input type="text" class="input" maxlength="50" required/>
+          </label>
+          <label class="form__input">
+            <span class="text">ISBN</span>
+            <input type="text" class="input" maxlength="17" required/>
+          </label>
+          <label class="form__input">
+            <span class="text">Язык</span>
+            <input type="text" class="input" maxlength="2" required/>
+          </label>
+          <label class="form__input">
+            <span class="text">Категория</span>
+            <input type="text" class="input" maxlength="50" required/>
+          </label>
+          <label class="form__input">
+            <span class="text">Имя автора</span>
+            <input type="text" class="input" maxlength="50"/>
+          </label>
+          <label class="form__input">
+            <span class="text">Отчество автора</span>
+            <input type="text" class="input" maxlength="50"/>
+          </label>
+          <label class="form__input">
+            <span class="text">Фамилия автора</span>
+            <input type="text" class="input" maxlength="50" required/>
+          </label>
+          <button type="submit" class="button button_submit">добавить</button>
+        </form>
+      </div>
+    </section>
 
-        <div class="card">
-          <h4 class="card__title">Собачье сердце</h4>
-          <div class="card__system">
-            <div>
-              <p class="card__isbn">ISBN: 932-392323-323-3</p>
-              <p class="card__series">Эксклюзивная классика</p>
-            </div>
-            <p class="card__language">RU</p>
-          </div>
-          <p class="text">Булгаков Михаил Афанасьевич</p>
-          <p class="text">Роман</p>
-          <p class="text"></p>
-          <button class="button button_delete">удалить</button>
-        </div>
+    <section class="form form_hidden" id="form_add-mybook">
+      <div class="form__container">
+        <button class="button button_close" id="close_add-mybook">x</button>
+        <h2 class="form__header">Моя новaя книгa</h2>
+        <form id="log-in" class="form__elements">
+          <label class="form__input">
+            <span class="text">Название</span>
+            <input type="text" class="input" maxlength="50" required/>
+          </label>
+          <label class="form__input">
+            <span class="text">ISBN</span>
+            <input type="text" class="input" maxlength="17" required/>
+          </label>
+          <label class="form__input">
+            <span class="text">Язык</span>
+            <input type="text" class="input" maxlength="2" required/>
+          </label>
+          <label class="form__input">
+            <span class="text">Категория</span>
+            <input type="text" class="input" maxlength="50" required/>
+          </label>
+          <label class="form__input">
+            <span class="text">Имя автора</span>
+            <input type="text" class="input" maxlength="50"/>
+          </label>
+          <label class="form__input">
+            <span class="text">Отчество автора</span>
+            <input type="text" class="input" maxlength="50"/>
+          </label>
+          <label class="form__input">
+            <span class="text">Фамилия автора</span>
+            <input type="text" class="input" maxlength="50" required/>
+          </label>
+          <button type="submit" class="button button_submit">добавить</button>
+        </form>
       </div>
     </section>
   </div>

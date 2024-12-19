@@ -15,10 +15,21 @@
         <a href="./myprofile.html" class="text text_navigation">мой профиль</a>
       </nav>
     </header>
-    <section class="section">
+    <section class="section section_exchange">
+      <label class="section__filter">
+        <span class="text">Показать только мой город</span>
+        <input type="checkbox" class="button__checkbox">
+      </label>
+      <label class="section__filter">
+        <span class="text">Сортировать</span>
+        <select class="button button_sort">
+          <option value="asc">по возрастанию</option>
+          <option value="desc">по убыванию</option>
+        </select>
+      </label>
       <div class="row row_header">
         <p class="text text_default text_bold row__profile">Пользователь:</p>
-        <p class="text text_default text_bold row__books">Отдает:</p>
+        <p class="text text_default text_bold row__books">Меняет:</p>
         <p class="text text_default text_bold row__books">Ищет:</p>
       </div>
       <div class="row">

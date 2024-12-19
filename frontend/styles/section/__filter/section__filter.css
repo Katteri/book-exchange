@@ -1,0 +1,7 @@
+.section__filter {
+  margin: 2vw 0 0;
+}
+
+.section__filter:nth-of-type(2) {
+  margin-top: 1vw;
+}
