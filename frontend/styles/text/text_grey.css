@@ -1,0 +1,8 @@
+.text_grey {
+  color: grey;
+  cursor:context-menu;
+}
+
+.text_grey:hover {
+  color: grey;
+}

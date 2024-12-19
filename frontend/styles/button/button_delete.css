@@ -4,3 +4,7 @@
   position: relative;
   left: 13.5vw;
 }
+
+.button_delete:hover {
+  background-color: brown;
+}

@@ -1,0 +1,11 @@
+.text_nickname {
+  display: block;
+  text-decoration: none;
+  color: black;
+  margin-bottom: .7vw;
+}
+
+.text_nickname:hover {
+  transition: color .1s ease-out;
+  color: orange;
+}
