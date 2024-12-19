@@ -8,7 +8,7 @@ const homeRouter = require("./routes/homeRouter");
 const db = require("./config/db");
 db.authenticate().catch(error => console.error(error))
 
-app.use("/users", userRouter);
+app.use(userRouter);
 app.use("/", homeRouter);
 
 // 404 error
