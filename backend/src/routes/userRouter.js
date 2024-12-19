@@ -1,9 +1,8 @@
 const express = require('express');
-const UserController = require('../controllers/userController'); // Adjust the path to match your structure
-
+const UserController = require('../controllers/userController');
 const router = express.Router();
 
-// Define the route to get all users
 router.get('/users', UserController.getAllUsers);
+router.get('/user', UserController.getOneUser);
 
 module.exports = router;
