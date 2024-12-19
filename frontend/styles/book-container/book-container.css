@@ -1,0 +1,9 @@
+.book-container {
+  width: 78vw;
+  position: relative;
+  left: -2vw;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  /* justify-content: space-between; */
+}

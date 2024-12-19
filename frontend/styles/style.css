@@ -28,3 +28,15 @@
 @import url(profile/__contact/profile__contact.css);
 @import url(profile/__statistics/profile__statistics.css);
 @import url(button/button_exit.css);
+@import url(profile/__books-section/profile__books-section.css);
+@import url(text/text_header.css);
+@import url(profile/__section-header/profile__section-header.css);
+@import url(button/button_add.css);
+@import url(book-container/book-container.css);
+@import url(card/card.css);
+@import url(card/__title/card__title.css);
+@import url(card/__system/card__system.css);
+@import url(card/__isbn/card__isbn.css);
+@import url(card/__language/card__language.css);
+@import url(card/__series/card__series.css);
+@import url(button/button_delete.css);

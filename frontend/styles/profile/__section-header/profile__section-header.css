@@ -1,0 +1,7 @@
+.profile__section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  height: 16vw;
+  position: relative;
+}

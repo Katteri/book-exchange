@@ -1,5 +1,6 @@
 .header {
-  width: 100vw;
+  width: 98.7vw;
+  margin: 0 auto;
   height: 5vw;
   border-bottom: solid .1vw black;
   display: flex;
