@@ -1,0 +1,7 @@
+.form__container {
+  position: relative;
+  background-color: white;
+  width: 50vw;
+  height: 80vh;
+  border-radius: 2vw;
+}

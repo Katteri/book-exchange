@@ -1,0 +1,11 @@
+.auth-content {
+  width: 100vw;
+  height: 28vw;
+  display: grid;
+  grid-template-columns: 60vw 13vw 27vw;
+  grid-template-rows: repeat(2, 1fr);
+  grid-template-areas:
+    "header text text"
+    "header log-in sign-in";
+  align-items: center;
+}

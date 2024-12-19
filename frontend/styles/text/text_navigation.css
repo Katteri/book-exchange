@@ -1,0 +1,10 @@
+.text_navigation {
+  padding-top: .3vw;
+  text-decoration: none;
+  color: black;
+}
+
+.text_navigation:hover {
+  transition: color .1s ease-out;
+  color: orange;
+}

@@ -1,0 +1,7 @@
+.profile__items {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: flex-start;
+  justify-content: space-between;
+  height: 10vw;
+}

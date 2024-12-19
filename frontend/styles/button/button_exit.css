@@ -1,0 +1,8 @@
+.button_exit {
+  align-self: flex-end;
+  width: 15vw;
+  height: 2.5vw;
+  position: relative;
+  right: -2vw;
+  margin-top: 2vw;
+}

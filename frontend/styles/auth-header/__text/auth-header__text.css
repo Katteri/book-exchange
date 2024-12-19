@@ -1,0 +1,9 @@
+.auth-header__text {
+  font-family: lepka;
+  font-size: 13vw;
+  line-height: 14vw;
+  text-align: end;
+  padding-right: 3vw;
+  margin: 0;
+  grid-area: header;
+}
