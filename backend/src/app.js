@@ -6,17 +6,12 @@ const homeRouter = require("./routes/homeRouter");
 
 // pool.connect().catch(error => console.error(error))
 const db = require("./config/db");
-db.authenticate().catch(error => console.error(error))
+db.authenticate()
+  .then(() => console.log('Database connected'))
+  .catch(error => console.error('Database connection error:', error));
 
-app.use(userRouter);
-app.use("/", homeRouter);
-
-// 404 error
-app.use((req, res, next) => {
-    res.status(404).send("Not found");
-});
+app.use(express.json()); // Parse JSON request bodies
+app.use(userRoutes); // Register the routes
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

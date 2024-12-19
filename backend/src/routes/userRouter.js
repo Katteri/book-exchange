@@ -1,8 +1,9 @@
-const express = require("express");
-const userController = require("../controllers/userController");
-const userRouter = express.Router();
+const express = require('express');
+const UserController = require('../path/to/UserController'); // Adjust the path to match your structure
 
-userRouter.use("/create", userController.addUser);
-userRouter.get("/users", userController.getUsers);
+const router = express.Router();
 
-module.exports = userRouter;
+// Define the route to get all users
+router.get('/users', UserController.getAllUsers);
+
+module.exports = router;
