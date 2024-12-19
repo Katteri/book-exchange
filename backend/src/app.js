@@ -4,7 +4,7 @@ const userRouter = require("./routes/userRouter");
 const homeRouter = require("./routes/homeRouter");
 const pool = require("./config/db");
 
-pool.authenticate().catch(error => console.error(error))
+pool.connect().catch(error => console.error(error))
 
 app.use("/users", userRouter);
 app.use("/", homeRouter);
