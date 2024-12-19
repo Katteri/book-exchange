@@ -2,9 +2,11 @@ const express = require('express');
 const app = express();
 const userRouter = require("./routes/userRouter");
 const homeRouter = require("./routes/homeRouter");
-const pool = require("./config/db");
+// const pool = require("./config/db");
 
-pool.connect().catch(error => console.error(error))
+// pool.connect().catch(error => console.error(error))
+const db = require("./config/db");
+db.authenticate().catch(error => console.error(error))
 
 app.use("/users", userRouter);
 app.use("/", homeRouter);
