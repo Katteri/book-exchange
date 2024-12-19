@@ -11,7 +11,7 @@ db.authenticate()
   .catch(error => console.error('Database connection error:', error));
 
 app.use(express.json()); // Parse JSON request bodies
-app.use(userRoutes); // Register the routes
+app.use(userRouter); // Register the routes
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
