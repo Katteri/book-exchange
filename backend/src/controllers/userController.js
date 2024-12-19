@@ -12,8 +12,9 @@ const UserController = {
     }
   },
   async getOneUser(req, res) {
+    const { nickname } = req.params;
     try {
-        const user = await db.query('SELECT * FROM users WHERE nickname = ?', req.params.id, { type: QueryTypes.SELECT });
+        const user = await db.query('SELECT * FROM users WHERE nickname = :nickname', { type: QueryTypes.SELECT, replacements: { nickname } });
         res.status(200).json(user);
     } catch (error) {
         console.error('Error fetching user:', error);
