@@ -1,0 +1,7 @@
+.form__select {
+  font-family: racama;
+  font-size: 1.2vw;
+  width: 20.5vw;
+  border-radius: .5vw;
+  border: inset .15vw black;
+}
