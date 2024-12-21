@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { QueryTypes } = require("sequelize");
 const bcrypt = require("bcrypt");
 const db = require("../config/db");
