@@ -1,19 +1,32 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
+
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const path = require('path')
+
+const db = require("./config/db");
+const { QueryTypes, json } = require('sequelize');
+
 const userRouter = require("./routes/userRouter");
 const bookRouter = require("./routes/bookRouter");
-// const pool = require("./config/db");
+const exchangeRouter = require("./routes/exchangeRouter");
+const authRouter = require("./routes/authRouter");
 
-// pool.connect().catch(error => console.error(error))
-const db = require("./config/db");
 
 db.authenticate()
   .then(() => console.log('Database connected'))
   .catch(error => console.error('Database connection error:', error));
 
-app.use(express.json()); // Parse JSON request bodies
-app.use(userRouter); // Register the routes
-app.use(bookRouter);
+app.use(express.urlencoded({extended: false}));
+
+app.use(express.json());
+app.use("/users", userRouter);
+app.use("/book", bookRouter);
+app.use("/exchange", exchangeRouter);
+app.use("/auth", authRouter);
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
