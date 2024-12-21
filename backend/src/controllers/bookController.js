@@ -107,7 +107,7 @@ const BookController = {
             });
             if (isbn_exists.length === 0) {
                 const jsonData = JSON.stringify([{
-                    isbn, title, first_name, middle_name, last_name, category, publish_date, language, book_series
+                    isbn, title, first_name, middle_name, last_name, category, publish_date, language, book_series, condition
                 }])
                 await db.query("CALL add_books_bulk(:json_data)",
                     {
