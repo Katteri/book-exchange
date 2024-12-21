@@ -66,10 +66,10 @@ const BookController = {
         const { user_id, isbn, title, first_name, middle_name, last_name, category, publish_date, language, book_series } = req.body;
         try {
             const isbn_exists = await db.query(
-                "SELECT book_id FROM book WHERE isbn = :isbn",
+                "SELECT book_id FROM book WHERE isbn = :book_isbn",
             {
                 type: QueryTypes.SELECT,
-                replacements: {isbn: isbn}
+                replacements: {book_isbn: isbn}
             });
             if (isbn_exists.length === 0) {
                 const jsonData = JSON.stringify([{
