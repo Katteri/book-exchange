@@ -2,7 +2,7 @@ const express = require("express");
 const BookController = require("../controllers/bookController");
 const router = express.Router();
 
-router.post("/addwanted", BookController.addBookToWanted);
+router.post("/wanted/add", BookController.addBookToWanted);
 router.post("/owned/add", BookController.addBookToOwned);
 
 router.delete("/wanted/delete", BookController.deleteBookFromWanted);
