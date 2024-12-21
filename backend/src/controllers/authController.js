@@ -58,7 +58,7 @@ const AuthController = {
   async login(req, res) {
     try {
       const { nickname, password } = req.body;
-      const user = await db.query(
+      const userResult = await db.query(
         `
         SELECT password_hash 
         FROM passwd 
@@ -71,11 +71,11 @@ const AuthController = {
         }
       );
 
-      if (user.length === 0) {
+      if (userResult.length === 0) {
         return res.status(404).send("Username cannot be found");
       }
 
-      const passwordHash = user[0].password_hash;
+      const passwordHash = userResult[0].password_hash;
       const isPasswordsMatch = await bcrypt.compare(password, passwordHash);
 
       if (isPasswordsMatch) {
@@ -84,6 +84,7 @@ const AuthController = {
           process.env.ACCESS_TOKEN_SECRET,
           { expiresIn: "1h" }
         );
+        console.log("Login successfull")
 
         return res.json({ accessToken });
       } else {
