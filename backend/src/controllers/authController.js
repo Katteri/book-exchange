@@ -82,7 +82,7 @@ const AuthController = {
       if (isPasswordsMatch) {
         const accessToken = jwt.sign(
           { name: nickname },
-          process.env.ACCESS_TOKEN_SECRET,
+          `${process.env.ACCESS_TOKEN_SECRET}`,
           { expiresIn: "1h" }
         );
         console.log("Login successfull")
