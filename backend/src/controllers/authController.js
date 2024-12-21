@@ -7,10 +7,10 @@ const AuthController = {
     const { nickname, email, first_name, last_name, city_id, country_id, password } = req.body;
     try {
       const existingUser = await db.query(
-        "SELECT user_id FROM users WHERE nickname = :nickname",
+        "SELECT user_id FROM users WHERE nickname = :nick",
         {
           type: QueryTypes.SELECT,
-          replacements: { nickname },
+          replacements: { nick: nickname },
         }
       );
 
@@ -22,29 +22,29 @@ const AuthController = {
       await db.query(
         `
         INSERT INTO users (nickname, first_name, last_name, city_id, country_id, email)
-        VALUES (:nickname, :first_name, :last_name, :city_id, :country_id, :email)
+        VALUES (:nick, :f_name, :l_name, :ci_id, :co_id, :e_mail)
         `,
         {
           type: QueryTypes.INSERT,
-          replacements: { nickname, first_name, last_name, city_id, country_id, email },
+          replacements: { nick: nickname, f_name: first_name, l_name: last_name, ci_id: city_id, co_id: country_id, e_mail: email },
         }
       );
       const userIdResult = await db.query(
-        "SELECT user_id FROM users WHERE nickname = :nickname",
+        "SELECT user_id FROM users WHERE nickname = :nick",
         {
           type: QueryTypes.SELECT,
-          replacements: { nickname },
+          replacements: { nick: nickname },
         }
       );
       const user_id = userIdResult[0]?.user_id;
       await db.query(
         `
         INSERT INTO passwd (user_id, password_hash) 
-        VALUES (:user_id, :hashedPassword)
+        VALUES (:u_id, :pass)
         `,
         {
           type: QueryTypes.INSERT,
-          replacements: { user_id, hashedPassword },
+          replacements: { u_id: user_id, pass: hashedPassword },
         }
       );
 
@@ -62,11 +62,11 @@ const AuthController = {
         SELECT password_hash 
         FROM passwd 
         JOIN users ON passwd.user_id = users.user_id 
-        WHERE nickname = :nickname
+        WHERE nickname = :nick
         `,
         {
           type: QueryTypes.SELECT,
-          replacements: { nickname },
+          replacements: { nick: nickname },
         }
       );
 

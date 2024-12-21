@@ -7,10 +7,10 @@ const ExchangeController = {
     try {
       const exchange_date = new Date();
       const book_id = await db.query(
-        'SELECT book_id FROM book WHERE isbn = :isbn',
+        'SELECT book_id FROM book WHERE isbn = :book_isbn',
         {
           type: QueryTypes.SELECT,
-          replacements: {isbn: isbn}
+          replacements: {book_isbn: isbn}
         }
       );
       const get_user_id = await db.query(
@@ -24,11 +24,11 @@ const ExchangeController = {
         `
         INSERT INTO
         exchange(book_id, give_user_id, get_user_id, exchange_date)
-        VALUES (?, ?, ?, ?)
+        VALUES (:bookid, :give_uid, get_uid, exch_date)
         `, 
         {
           type: QueryTypes.INSERT,
-          replacements: [book_id, give_user_id, get_user_id, exchange_date]
+          replacements: {bookid: book_id, give_uid: give_user_id, get_uid: get_user_id, exch_date: exchange_date}
         }
       );
       res.status(200).send("Exchange added sucessfully");
