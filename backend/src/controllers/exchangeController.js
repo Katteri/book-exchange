@@ -14,6 +14,7 @@ const ExchangeController = {
         }
       );
       const bookId = book_id[0]?.book_id;
+      console.log(book_id, bookId)
       const get_user_id = await db.query(
         'SELECT user_id FROM users WHERE nickname = :nick',
         {

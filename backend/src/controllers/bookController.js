@@ -3,7 +3,7 @@ const db = require("../config/db");
 
 const BookController = {
     async getWantedBooks(req, res) {
-        const { user_id } = req.params.user_id;
+        const user_id = req.params.user_id;
         try {
             const wanted_books = await db.query(
                 `SELECT
@@ -32,7 +32,7 @@ const BookController = {
         };
     },
     async getOwnedBooks(req, res) {
-        const { user_id } = req.params.user_id;
+        const user_id = req.params.user_id;
         try {
             const owned_books = await db.query(
                 `
@@ -105,24 +105,18 @@ const BookController = {
                 type: QueryTypes.SELECT,
                 replacements: {book_isbn: isbn}
             });
-            if (!isbn_exists) {
+            if (isbn_exists.length === 0) {
                 const jsonData = JSON.stringify([{
                     isbn, title, first_name, middle_name, last_name, category, publish_date, language, book_series
                 }])
-                await db.query("CALL add_books_bulk(:json_data::JSONB)",
+                await db.query("CALL add_books_bulk(:json_data)",
                     {
                         type: QueryTypes.RAW,
                         replacements: {json_data: jsonData}
                     }
                 )
             };
-            const bookId = await db.query(
-                "SELECT book_id FROM book WHERE isbn = :book_isbn",
-                {
-                    type: QueryTypes.SELECT,
-                    replacements: {book_isbn: isbn}
-                }
-            );
+            const bookId = isbn_exists[0]?.book_id;
             await db.query(
                 "INSERT INTO ownership (user_id, book_id, condition) VALUES (:u_id, :b_id, :condition)",
                 {
@@ -147,10 +141,10 @@ const BookController = {
                 }
             );
             console.log(book)
-            if (!book) {
+            if (book.length === 0) {
                 return res.status(404).json({error: "Book not found"});
             }
-            const bookId = book[0].book_id;
+            const bookId = book[0]?.book_id;
             const result = await db.query(
                 "DELETE FROM wanted WHERE user_id = :u_id AND book_id = :book_id",
                 {
@@ -182,7 +176,7 @@ const BookController = {
             if (!book) {
                 return res.status(404).json({error: "Book not found"});
             }
-            const bookId = book[0].book_id;
+            const bookId = book[0]?.book_id;
             const result = await db.query(
                 "DELETE FROM ownership WHERE user_id = :u_id AND book_id = :book_id",
                 {

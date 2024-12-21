@@ -26,7 +26,33 @@ app.use("/users", userRouter);
 app.use("/book", bookRouter);
 app.use("/exchange", exchangeRouter);
 app.use("/auth", authRouter);
-
+app.use("/debug/books", async (req, res) => {
+  books = await db.query(
+    'SELECT * FROM books',
+    {
+      type: QueryTypes.SELECT,
+    }
+  );
+  res.status(200).json(books)
+})
+app.use("/debug/wanted", async (req, res) => {
+  wantedlist = await db.query(
+    'SELECT * FROM wanted',
+    {
+      type: QueryTypes.SELECT,
+    }
+  );
+  res.status(200).json(wantedlist)
+})
+app.use("/debug/owned", async (req, res) => {
+  ownedlist = await db.query(
+    'SELECT * FROM owned',
+    {
+      type: QueryTypes.SELECT,
+    }
+  );
+  res.status(200).json(ownedlist)
+})
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
