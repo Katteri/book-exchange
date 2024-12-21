@@ -7,17 +7,17 @@ const ExchangeController = {
     try {
       const exchange_date = new Date();
       const book_id = await db.query(
-        'SELECT book_id FROM book WHERE isbn = ?',
+        'SELECT book_id FROM book WHERE isbn = :isbn',
         {
           type: QueryTypes.SELECT,
-          replacements: [isbn]
+          replacements: {isbn: isbn}
         }
       );
       const get_user_id = await db.query(
-        'SELECT user_id FROM users WHERE nickname = ?',
+        'SELECT user_id FROM users WHERE nickname = :nick',
         {
           type: QueryTypes.SELECT,
-          replacements: [get_nickname]
+          replacements: {nick: get_nickname}
         }
       );
       await db.query(
@@ -51,11 +51,11 @@ const ExchangeController = {
         JOIN book USING(book_id)
         JOIN author a USING(author_id)
         JOIN city USING(city_id)
-        WHERE user_id = ?
+        WHERE user_id = :user_id
         `,
         {
           type: QueryTypes.SELECT,
-          replacements: [userId]
+          replacements: {user_id: userId}
         }
       );
       res.status(200).json(exchanges_wanted);
@@ -78,11 +78,11 @@ const ExchangeController = {
         JOIN book USING(book_id)
         JOIN author a USING(author_id)
         JOIN city USING(city_id)
-        WHERE user_id = ?
+        WHERE user_id = :user_id
         `,
       {
         type: QueryTypes.SELECT,
-        replacements: [userId]
+        replacements: {user_id: userId}
       });
       res.status(200).json(exchanges_owned);
     } catch (error) {
@@ -91,6 +91,5 @@ const ExchangeController = {
     }
   }
 };
-
 
 module.exports = ExchangeController;
