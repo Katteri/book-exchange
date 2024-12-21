@@ -71,24 +71,18 @@ const BookController = {
                 type: QueryTypes.SELECT,
                 replacements: {isbn: isbn}
             });
-            if (!isbn_exists) {
+            if (isbn_exists.length === 0) {
                 const jsonData = JSON.stringify([{
                     isbn, title, first_name, middle_name, last_name, category, publish_date, language, book_series
                 }])
-                await db.query("CALL add_books_bulk(:json_data::JSONB)",
+                await db.query("CALL add_books_bulk(:json_data)",
                     {
                         type: QueryTypes.RAW,
                         replacements: {json_data: jsonData}
                     }
                 )
             };
-            const bookId = await db.query(
-                "SELECT book_id FROM book WHERE isbn = :isbn?",
-                {
-                    type: QueryTypes.SELECT,
-                    replacements: {isbn: isbn}
-                }
-            );
+            const bookId = isbn_exists[0]?.book_id;
             await db.query(
                 "INSERT INTO wanted (user_id, book_id) VALUES (:userid, :bookid)",
                 {
@@ -96,7 +90,7 @@ const BookController = {
                     replacements: {userid: user_id, bookid: bookId}
                 }
             );
-            res.status(200);
+            res.status(200).send("Book successfully added to wanted list");
         } catch (error) {
             console.error('Error adding book to wanted list:', error);
             res.status(500).json({ error: 'Failed to add book'});
@@ -136,7 +130,7 @@ const BookController = {
                     replacements: {user_id: user_id, book_id: bookId, condition: condition}
                 }
             );
-            res.status(200);
+            res.status(200).send("Book successfully added to ownership list");
         } catch (error) {
             console.error('Error adding book to ownership list:', error);
             res.status(500).json({ error: 'Failed to add book'});

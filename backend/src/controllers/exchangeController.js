@@ -31,7 +31,7 @@ const ExchangeController = {
           replacements: [book_id, give_user_id, get_user_id, exchange_date]
         }
       );
-      res.status(200);
+      res.status(200).send("Exchange added sucessfully");
     } catch (error) {
       console.error('Error adding exchange:', error);
       res.status(500).json({ error: 'Failed to add exchange' });
