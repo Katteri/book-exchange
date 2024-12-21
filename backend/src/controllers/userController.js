@@ -17,13 +17,13 @@ const UserController = {
     }
   },
   async getOneUser(req, res) {
-    const { nickname } = req.params.nickname;
+    const nickname = req.params.nickname;
     try {
         const user = await db.query(
-          'SELECT * FROM get_users_info(?)',
+          'SELECT * FROM get_users_info(:nick)',
           {
             type: QueryTypes.SELECT,
-            replacements: [nickname]
+            replacements: { nick: nickname }
           }
         );
         res.status(200).json(user);
