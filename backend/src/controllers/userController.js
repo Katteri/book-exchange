@@ -4,7 +4,12 @@ const db = require('../config/db');
 const UserController = {
   async getAllUsers(req, res) {
     try {
-      const users = await db.query('SELECT * FROM users', { type: QueryTypes.SELECT });
+      const users = await db.query(
+        'SELECT * FROM users',
+        {
+          type: QueryTypes.SELECT
+        }
+      );
       res.status(200).json(users);
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -12,9 +17,15 @@ const UserController = {
     }
   },
   async getOneUser(req, res) {
-    const { nickname } = req.params;
+    const { nickname } = req.params.nickname;
     try {
-        const user = await db.query('SELECT * FROM users WHERE nickname = :nickname', { type: QueryTypes.SELECT, replacements: { nickname } });
+        const user = await db.query(
+          'SELECT * FROM get_users_info(?)',
+          {
+            type: QueryTypes.SELECT,
+            replacements: [nickname]
+          }
+        );
         res.status(200).json(user);
     } catch (error) {
         console.error('Error fetching user:', error);
@@ -22,6 +33,5 @@ const UserController = {
     }
   }
 };
-
 
 module.exports = UserController;
