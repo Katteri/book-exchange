@@ -56,15 +56,3 @@ app.use("/debug/owned", async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-app._router.stack.forEach((middleware) => {
-  if (middleware.route) { // routes registered directly on the app
-      console.log(middleware.route);
-  } else if (middleware.name === 'router') { // router middleware
-      middleware.handle.stack.forEach((handler) => {
-          if (handler.route) {
-              console.log(handler.route);
-          }
-      });
-  }
-});
