@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 
 const AuthController = {
   async signup(req, res) {
-    const { nickname, email, first_name, last_name, city_id, country_id, password } = req.body;
+    const { nickname, first_name, last_name, country_name, city_name, email, password } = req.body;
     try {
       const existingUser = await db.query(
         "SELECT user_id FROM users WHERE nickname = :nick",
@@ -15,12 +15,45 @@ const AuthController = {
           replacements: { nick: nickname },
         }
       );
-
       if (existingUser.length > 0) {
         return res.status(409).send("User with such nickname already exists");
       }
       const saltRounds = 10;
       const hashedPassword = await bcrypt.hash(password, saltRounds);
+      const country_exists = await db.query( // находим айди страны
+        "SELECT country_id FROM country WHERE country_name = :country",
+        {
+          type: QueryTypes.SELECT,
+          replacements: {country: country_name}
+        }
+      );
+      if (country_exists.length === 0) { // если нет такой страны еще, то добавляем ее
+        await db.query(
+          "INSERT INTO country (country_name) VALUES (:country)",
+          {
+            type: QueryTypes.INSERT,
+            replacements: {country: country_name}
+          }
+        );
+      };
+      const countryId = country_exists[0]?.country_id // взяли айди страны
+      const city_exists = await db.query(
+        "SELECT city_id FROM city WHERE city_name = :city AND country_id = :country_id",
+        {
+          type: QueryTypes.SELECT,
+          replacements: {city: city_name, country_id: countryId}
+        }
+      )
+      if (city_exists.length === 0) {
+        await db.query(
+          "INSERT INTO city (city_name, country_id) VALUES (:city, :country_id)",
+          {
+            type: QueryTypes.INSERT,
+            replacements: {city: city_name, country_id: countryId}
+          }
+        )
+      }
+      const cityId = city_exists[0]?.city_id
       await db.query(
         `
         INSERT INTO users (nickname, first_name, last_name, city_id, country_id, email)
@@ -28,7 +61,7 @@ const AuthController = {
         `,
         {
           type: QueryTypes.INSERT,
-          replacements: { nick: nickname, f_name: first_name, l_name: last_name, ci_id: city_id, co_id: country_id, e_mail: email },
+          replacements: { nick: nickname, f_name: first_name, l_name: last_name, ci_id: cityId, co_id: countryId, e_mail: email },
         }
       );
       const userIdResult = await db.query(
