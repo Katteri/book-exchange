@@ -86,6 +86,7 @@ const AuthController = {
         }
       );
       const userId = user[0]?.user_id;
+      console.log(userId);
       await db.query(
         `
         INSERT INTO passwd(user_id, password_hash) 
