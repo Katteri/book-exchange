@@ -9,10 +9,10 @@ const AuthController = {
     const { nickname, first_name, last_name, country_name, city_name, email, password } = req.body;
     try {
       const existingUser = await db.query(
-        "SELECT user_id FROM users WHERE nickname = :nick",
+        "SELECT user_id FROM users WHERE nickname = :nickname",
         {
           type: QueryTypes.SELECT,
-          replacements: { nick: nickname },
+          replacements: { nickname },
         }
       );
       if (existingUser.length > 0) {
@@ -20,95 +20,87 @@ const AuthController = {
       }
       const saltRounds = 10;
       const hashedPassword = await bcrypt.hash(password, saltRounds);
-      const transaction = await db.transaction();
-      try {
-        const country = await db.query(
-          `
-          INSERT INTO country (country_name)
-          VALUES (:country)
-          ON CONFLICT (country_name) DO NOTHING
-          RETURNING country_id
-          `,
-          {
-            type: QueryTypes.INSERT,
-            replacements: { country: country_name},
-            transaction
-          }
-        );
-        const countryId = country[0]?.country_id || 
-        (await db.query(
-          "SELECT country_id FROM country where country_name = :country",
-          {
-            type: QueryTypes.SELECT,
-            replacements: {country: country_name},
-            transaction
-          }
-        ))[0]?.country_id;
-        const city = await db.query(
-          `
-          INSERT INTO city (city_name, country_id)
-          VALUES (:ci_name, :co_id)
-          
-          RETURNING city_id
-          `,
-          {
-            type: QueryTypes.INSERT,
-            replacements: { ci_name: city_name, co_id: countryId},
-            transaction
-          }
-        );
-        const cityId = city[0]?.city_id ||
-        (await db.query(
-          "SELECT city_id FROM city WHERE city_name = :ci_name AND country_id = :country_id",
-          {
-            type: QueryTypes.SELECT,
-            replacements: {ci_name: city_name, country_id: countryId},
-            transaction
-          }
-        ))[0]?.city_id;
-        await db.query(
-          `
-          INSERT INTO users (nickname, first_name, last_name, city_id, country_id, email)
-          VALUES (:nick, :f_name, :l_name, :ci_id, :co_id, :e_mail)
-          `,
-          {
-            type: QueryTypes.INSERT,
-            replacements: {
-            nick: nickname,
-            f_name: first_name,
-            l_name: last_name,
-            ci_id: cityId,
-            co_id: countryId,
-            e_mail: email
-          },
-          transaction
-        }
-      );
-      const userIdResult = await db.query(
-        "SELECT user_id FROM users WHERE nickname = :nickname",
+      
+      const finding_country = await db.query( // вытягиваем айди страны по имени
+        "SELECT country_id FROM country WHERE country_name = :country_name",
         {
           type: QueryTypes.SELECT,
-          replacements: { nickname },
+          replacements: { country_name }
         }
       );
-      const user_id = userIdResult[0]?.user_id;
-      await db.query(
+      if (finding_country.length === 0) { // если страны не нашлось
+        await db.query( // добавляем страну
+          "INSERT INTO country (country_name) VALUES (:country_name)",
+          {
+            type: QueryTypes.INSERT,
+            replacements: { country_name }
+          }
+        )
+      }
+      const country_id_q = await db.query( // вытягиваем айди страны
+        "SELECT country_id FROM country WHERE country_name = :country_name",
+        {
+          type: QueryTypes.SELECT,
+          replacements: { country_name }
+        }
+      )
+      const country_id = country_id_q[0].country_id // берем айди страны
+
+      const finding_city = await db.query( // ищем город в такой стране
+        `SELECT city_id 
+        FROM city 
+        WHERE city_name = :city_name AND country_id = :country_id`,
+        {
+          type: QueryTypes.SELECT,
+          replacements: { city_name, country_id }
+        }
+      )
+      if (finding_city.length === 0) { // если не нашлось города
+        await db.query( // создаем его
+          "INSERT INTO city (city_name, country_id) VALUES (:city_name, :country_id)",
+          {
+            type: QueryTypes.INSERT,
+            replacements: { city_name, country_id }
+          }
+        )
+      }
+      const city_id_q = await db.query( // вытягиваем айди города
+        "SELECT city_id FROM city WHERE city_name = :city_name AND country_id = :country_id",
+        {
+          type: QueryTypes.SELECT,
+          replacements: { city_name }
+        }
+      )
+      const city_id = city_id_q[0].city_id // достаем айди города
+      await db.query( // добавлямем юзера
         `
-        INSERT INTO passwd(user_id, password_hash) 
+        INSERT INTO users (nickname, first_name, last_name, city_id, country_id, email)
+        VALUES (:nickname, :first_name, :last_name, :city_id, :country_id, :email)
+        `,
+        {
+          type: QueryTypes.INSERT,
+          replacements: { nickname, first_name, last_name, city_id, country_id, email },
+        }
+      );
+      const userIdResult = await db.query( // берем айди добавленного юзера по введенному нику
+        "SELECT user_id from users WHERE nickname = :nickname",
+        {
+          type: QueryTypes.SELECT,
+          replacements: { nickname }
+        }
+      );
+      const user_id = userIdResult[0].user_id; // айди юзера
+      await db.query( // добавляем пароль
+        `
+        INSERT INTO passwd (user_id, password_hash)
         VALUES (:user_id, :hashedPassword)
         `,
         {
           type: QueryTypes.INSERT,
-          replacements: { user_id, hashedPassword },
-          transaction
+          replacements: { user_id, hashedPassword }
         }
       );
-      await transaction.commit();
       return res.status(201).send("User signed up successfully!");
-    } catch (error) {
-      await transaction.rollback();
-      throw error;
-    }
   } catch (error) {
     console.error("Error during signup:", error);
     return res.status(500).send("An error occured during signup");
