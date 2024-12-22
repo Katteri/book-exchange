@@ -73,32 +73,20 @@ const AuthController = {
       )
       const city_id = city_id_q[0].city_id // достаем айди города
       await db.query( // добавлямем юзера
-        `
+        sql`
         INSERT INTO users (nickname, first_name, last_name, city_id, country_id, email)
-        VALUES (:nickname, :first_name, :last_name, :city_id, :country_id, :email)
-        `,
-        {
-          type: QueryTypes.INSERT,
-          replacements: { nickname, first_name, last_name, city_id, country_id, email },
-        }
+        VALUES (${nickname}, ${first_name}, ${last_name}, ${city_id}, ${country_id}, ${email})
+        `
       );
       const userIdResult = await db.query( // берем айди добавленного юзера по введенному нику
-        "SELECT user_id from users WHERE nickname = :nickname",
-        {
-          type: QueryTypes.SELECT,
-          replacements: { nickname }
-        }
+        `SELECT user_id from users WHERE nickname = ${nickname}`
       );
       const user_id = userIdResult[0].user_id; // айди юзера
       await db.query( // добавляем пароль
-        `
+        sql`
         INSERT INTO passwd (user_id, password_hash)
-        VALUES (:user_id, :hashedPassword)
-        `,
-        {
-          type: QueryTypes.INSERT,
-          replacements: { user_id, hashedPassword }
-        }
+        VALUES (${user_id}, ${hashedPassword})
+        `
       );
       return res.status(201).send("User signed up successfully!");
   } catch (error) {
