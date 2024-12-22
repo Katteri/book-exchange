@@ -47,13 +47,13 @@ const AuthController = {
         const city = await db.query(
           `
           INSERT INTO city (city_name, country_id)
-          VALUES (:city_name, :country_id)
+          VALUES (:ci, :co_id)
           ON CONFLICT (city_name, country_id) DO NOTHING
           RETURNING city_id
           `,
           {
             type: QueryTypes.INSERT,
-            replacements: { ci_name: city_name, country_id: countryId},
+            replacements: { ci_name: city_name, co_id: countryId},
             transaction
           }
         );
