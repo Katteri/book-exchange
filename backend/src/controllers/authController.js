@@ -111,7 +111,7 @@ const AuthController = {
     }
   } catch (error) {
     console.error("Error during signup:", error);
-    return res.status(500).send("An error occured during signup");
+    return res.status(500).send("An error occured during signup", res.error);
   }},
   async login(req, res) {
     try {
