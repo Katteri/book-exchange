@@ -66,11 +66,10 @@ const AuthController = {
             transaction
           }
         ))[0]?.city_id;
-        const user = await db.query(
+        await db.query(
           `
           INSERT INTO users (nickname, first_name, last_name, city_id, country_id, email)
           VALUES (:nick, :f_name, :l_name, :ci_id, :co_id, :e_mail)
-          RETURNING user_id
           `,
           {
             type: QueryTypes.INSERT,
@@ -85,8 +84,14 @@ const AuthController = {
           transaction
         }
       );
-      const userId = user[0]?.user_id;
-      console.log(userId);
+      const userIdResult = await db.query(
+        "SELECT user_id FROM users WHERE nickname = :nickname",
+        {
+          type: QueryTypes.SELECT,
+          replacements: { nickname },
+        }
+      );
+      const userId = userIdResult[0]?.user_id;
       await db.query(
         `
         INSERT INTO passwd(user_id, password_hash) 
