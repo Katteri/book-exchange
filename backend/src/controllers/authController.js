@@ -75,7 +75,7 @@ const AuthController = {
         `
       );
       const userIdResult = await db.query( // берем айди добавленного юзера по введенному нику
-        `SELECT user_id from users WHERE nickname = ${nickname}`
+        sql`SELECT user_id from users WHERE nickname = ${nickname}`
       );
       const user_id = userIdResult[0].user_id; // айди юзера
       await db.query( // добавляем пароль
