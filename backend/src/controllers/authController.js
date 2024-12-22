@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { QueryTypes } = require("sequelize");
+const { QueryTypes, sql } = require("sequelize");
 const bcrypt = require("bcrypt");
 const db = require("../config/db");
 const jwt = require('jsonwebtoken');
