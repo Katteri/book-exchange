@@ -20,28 +20,27 @@ const AuthController = {
       }
       const saltRounds = 10;
       const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-      const transaction = await db.transaction(); // <-- транакця
+      const transaction = await db.transaction();
       try {
         const country = await db.query(
           `
           INSERT INTO country (country_name)
-          VALUES (:country_name)
+          VALUES (:country)
           ON CONFLICT (country_name) DO NOTHING
           RETURNING country_id
           `,
           {
             type: QueryTypes.INSERT,
-            replacements: { country_name},
+            replacements: { country: country_name},
             transaction
           }
         );
         const countryId = country[0]?.country_id || 
         (await db.query(
-          "SELECT country_id FROM country where country_name = :country_name",
+          "SELECT country_id FROM country where country_name = :country",
           {
             type: QueryTypes.SELECT,
-            replacements: {country_name},
+            replacements: {country: country_name},
             transaction
           }
         ))[0]?.country_id;
@@ -49,21 +48,21 @@ const AuthController = {
           `
           INSERT INTO city (city_name, country_id)
           VALUES (:city_name, :country_id)
-          ON CONFLICT (city_name, country_id) DO NOTHING
+          ON CONFLICT (ci_name, country_id) DO NOTHING
           RETURNING city_id
           `,
           {
             type: QueryTypes.INSERT,
-            replacements: { city_name, country_id: countryId},
+            replacements: { ci_name: city_name, country_id: countryId},
             transaction
           }
         );
         const cityId = city[0]?.city_id ||
         (await db.query(
-          "SELECT city_id FROM city WHERE city_name = :city_name AND country_id = :country_id",
+          "SELECT city_id FROM city WHERE city_name = :ci_name AND country_id = :country_id",
           {
             type: QueryTypes.SELECT,
-            replacements: {city_name, country_id: countryId},
+            replacements: {ci_name: city_name, country_id: countryId},
             transaction
           }
         ))[0]?.city_id;
