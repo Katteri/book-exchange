@@ -1,10 +1,11 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
-
+app.use(cors());
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const path = require('path')
+const cors = require('cors');
 
 const db = require("./config/db");
 const { QueryTypes, json } = require('sequelize');
