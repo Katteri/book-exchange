@@ -1,8 +1,9 @@
 require('dotenv').config();
-const { QueryTypes, sql } = require("sequelize");
+const { QueryTypes } = require("sequelize");
 const bcrypt = require("bcrypt");
 const db = require("../config/db");
 const jwt = require('jsonwebtoken');
+const { query } = require('express');
 
 const AuthController = {
   async signup(req, res) {
@@ -65,24 +66,40 @@ const AuthController = {
         )
       }
       const city_id_q = await db.query( // вытягиваем айди города
-        sql`SELECT city_id FROM city WHERE city_name = ${city_name} AND country_id = ${country_id}`
+        `SELECT city_id FROM city WHERE city_name = :city_name AND country_id = :country_id`,
+        {
+          type: QueryTypes.SELECT,
+          replacements: { city_name, country_id }
+        }
       )
       const city_id = city_id_q[0].city_id // достаем айди города
       await db.query( // добавлямем юзера
-        sql`
-        INSERT INTO users (nickname, first_name, last_name, city_id, country_id, email)
-        VALUES (${nickname}, ${first_name}, ${last_name}, ${city_id}, ${country_id}, ${email})
         `
+        INSERT INTO users (nickname, first_name, last_name, city_id, country_id, email)
+        VALUES (:nickname, :first_name, :last_name, :city_id, :country_id, :email)
+        `,
+        {
+          type: QueryTypes.INSERT,
+          replacements: { nickname, first_name, last_name, city_id, country_id, email }
+        }
       );
       const userIdResult = await db.query( // берем айди добавленного юзера по введенному нику
-        sql`SELECT user_id from users WHERE nickname = ${nickname}`
+        `SELECT user_id from users WHERE nickname = :nickname`,
+        {
+          type: QueryTypes.SELECT,
+          replacements: { nickname }
+        }
       );
       const user_id = userIdResult[0].user_id; // айди юзера
       await db.query( // добавляем пароль
-        sql`
-        INSERT INTO passwd (user_id, password_hash)
-        VALUES (${user_id}, ${hashedPassword})
         `
+        INSERT INTO passwd (user_id, password_hash)
+        VALUES (:user_id, :hashedPassword)
+        `,
+        {
+          type: QueryTypes.INSERT,
+          replacements: { user_id, hashedPassword }
+        }
       );
       return res.status(201).send("User signed up successfully!");
   } catch (error) {
@@ -97,11 +114,11 @@ const AuthController = {
         SELECT password_hash 
         FROM passwd 
         JOIN users ON passwd.user_id = users.user_id 
-        WHERE nickname = :nick
+        WHERE nickname = :nickname
         `,
         {
           type: QueryTypes.SELECT,
-          replacements: { nick: nickname },
+          replacements: { nickname },
         }
       );
 
