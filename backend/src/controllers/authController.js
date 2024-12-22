@@ -95,11 +95,11 @@ const AuthController = {
       await db.query(
         `
         INSERT INTO passwd(user_id, password_hash) 
-        VALUES (:usr_id, :hashed_password)
+        VALUES (:userId, :hashedPassword)
         `,
         {
           type: QueryTypes.INSERT,
-          replacements: {usr_id: userId, hashed_password: hashedPassword},
+          replacements: {userId, hashedPassword},
           transaction
         }
       );
