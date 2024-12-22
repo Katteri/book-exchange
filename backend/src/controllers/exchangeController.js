@@ -14,7 +14,6 @@ const ExchangeController = {
         }
       );
       const bookId = book_id[0]?.book_id;
-      console.log(book_id, bookId)
       const get_user_id = await db.query(
         'SELECT user_id FROM users WHERE nickname = :nick',
         {
@@ -22,7 +21,7 @@ const ExchangeController = {
           replacements: {nick: get_nickname}
         }
       );
-      const getUserId = get_user_id[0]?.user_id;
+      const getuser_id = get_user_id[0]?.user_id;
       await db.query(
         `
         INSERT INTO
@@ -31,7 +30,7 @@ const ExchangeController = {
         `, 
         {
           type: QueryTypes.INSERT,
-          replacements: {bookid: bookId, give_uid: give_user_id, get_uid: getUserId, exch_date: exchange_date}
+          replacements: {bookid: bookId, give_uid: give_user_id, get_uid: getuser_id, exch_date: exchange_date}
         }
       );
       res.status(200).send("Exchange added sucessfully");
@@ -42,7 +41,7 @@ const ExchangeController = {
   },
   async findExchangeWanted(req, res) {
     try {
-      const {userId} = req.body;
+      const {user_id} = req.body;
       const exchanges_wanted = await db.query(
         `
         SELECT
@@ -58,7 +57,7 @@ const ExchangeController = {
         `,
         {
           type: QueryTypes.SELECT,
-          replacements: {user_id: userId}
+          replacements: {user_id: user_id}
         }
       );
       res.status(200).json(exchanges_wanted);
@@ -69,7 +68,7 @@ const ExchangeController = {
   },
   async findExchangeOwned(req, res) {
     try {
-      const {userId} = req.body;
+      const {user_id} = req.body;
       const exchanges_owned = await db.query(
         `
         SELECT
@@ -81,11 +80,11 @@ const ExchangeController = {
         JOIN book USING(book_id)
         JOIN author a USING(author_id)
         JOIN city USING(city_id)
-        WHERE user_id = :user_id
+        WHERE user_id = :userId
         `,
       {
         type: QueryTypes.SELECT,
-        replacements: {user_id: userId}
+        replacements: {userId: user_id}
       });
       res.status(200).json(exchanges_owned);
     } catch (error) {
