@@ -48,7 +48,7 @@ const AuthController = {
           `
           INSERT INTO city (city_name, country_id)
           VALUES (:city_name, :country_id)
-          ON CONFLICT (ci_name, country_id) DO NOTHING
+          ON CONFLICT (city_name, country_id) DO NOTHING
           RETURNING city_id
           `,
           {
