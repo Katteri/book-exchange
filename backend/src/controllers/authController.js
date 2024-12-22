@@ -65,11 +65,7 @@ const AuthController = {
         )
       }
       const city_id_q = await db.query( // вытягиваем айди города
-        "SELECT city_id FROM city WHERE city_name = :city_name AND country_id = :country_id",
-        {
-          type: QueryTypes.SELECT,
-          replacements: { city_name }
-        }
+        sql`SELECT city_id FROM city WHERE city_name = ${city_name} AND country_id = ${country_id}`
       )
       const city_id = city_id_q[0].city_id // достаем айди города
       await db.query( // добавлямем юзера
