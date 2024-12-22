@@ -20,75 +20,94 @@ const AuthController = {
       }
       const saltRounds = 10;
       const hashedPassword = await bcrypt.hash(password, saltRounds);
-      const country_exists = await db.query( // находим айди страны
-        "SELECT country_id FROM country WHERE country_name = :country",
-        {
-          type: QueryTypes.SELECT,
-          replacements: {country: country_name}
-        }
-      );
-      if (country_exists.length === 0) { // если нет такой страны еще, то добавляем ее
-        await db.query(
-          "INSERT INTO country (country_name) VALUES (:country)",
+
+      const transaction = await db.transaction(); // <-- транакця
+      try {
+        const country = await db.query(
+          `
+          INSERT INTO country (country_name)
+          VALUES (:country_name)
+          ON CONFLICT (country_name) DO NOTHING
+          RETURNING country_id
+          `,
           {
             type: QueryTypes.INSERT,
-            replacements: {country: country_name}
+            replacements: { country_name},
+            transaction
           }
         );
-      };
-      const countryId = country_exists[0]?.country_id // взяли айди страны
-      const city_exists = await db.query(
-        "SELECT city_id FROM city WHERE city_name = :city AND country_id = :country_id",
-        {
-          type: QueryTypes.SELECT,
-          replacements: {city: city_name, country_id: countryId}
-        }
-      )
-      if (city_exists.length === 0) {
-        await db.query(
-          "INSERT INTO city (city_name, country_id) VALUES (:city, :country_id)",
+        const countryId = country[0]?.country_id || 
+        (await db.query(
+          "SELECT country_id FROM country where country_name = :country_name",
+          {
+            type: QueryTypes.SELECT,
+            replacements: {country_name},
+            transaction
+          }
+        ))[0]?.country_id;
+        const city = await db.query(
+          `
+          INSERT INTO city (city_name, country_id)
+          VALUES (:city_name, :country_id)
+          ON CONFLICT (city_name, country_id) DO NOTHING
+          RETURNING city_id
+          `,
           {
             type: QueryTypes.INSERT,
-            replacements: {city: city_name, country_id: countryId}
+            replacements: { city_name, country_id: countryId},
+            transaction
           }
-        )
-      }
-      const cityId = city_exists[0]?.city_id
+        );
+        const cityId = city[0]?.city_id ||
+        (await db.query(
+          "SELECT city_id FROM city WHERE city_name = :city_name AND country_id = :country_id",
+          {
+            type: QueryTypes.SELECT,
+            replacements: {city_name, country_id: countryId},
+            transaction
+          }
+        ))[0]?.city_id;
+        const user = await db.query(
+          `
+          INSERT INTO users (nickname, first_name, last_name, city_id, country_id, email)
+          VALUES (:nick, :f_name, :l_name, :ci_id, :co_id, :e_mail)
+          RETURNING user_id
+          `,
+          {
+            type: QueryTypes.INSERT,
+            replacements: {
+            nick: nickname,
+            f_name: first_name,
+            l_name: last_name,
+            ci_id: cityId,
+            co_id: countryId,
+            e_mail: email
+          },
+          transaction
+        }
+      );
+      const userId = user[0]?.user_id;
       await db.query(
         `
-        INSERT INTO users (nickname, first_name, last_name, city_id, country_id, email)
-        VALUES (:nick, :f_name, :l_name, :ci_id, :co_id, :e_mail)
+        INSERT INTO passwd(user_id, password_hash) 
+        VALUES (:user_id, :hashed_password)
         `,
         {
           type: QueryTypes.INSERT,
-          replacements: { nick: nickname, f_name: first_name, l_name: last_name, ci_id: cityId, co_id: countryId, e_mail: email },
+          replacements: {user_id: userId, hashed_password: hashedPassword},
+          transaction
         }
       );
-      const userIdResult = await db.query(
-        "SELECT user_id FROM users WHERE nickname = :nick",
-        {
-          type: QueryTypes.SELECT,
-          replacements: { nick: nickname },
-        }
-      );
-      const user_id = userIdResult[0]?.user_id;
-      await db.query(
-        `
-        INSERT INTO passwd (user_id, password_hash) 
-        VALUES (:u_id, :pass)
-        `,
-        {
-          type: QueryTypes.INSERT,
-          replacements: { u_id: user_id, pass: hashedPassword },
-        }
-      );
-
+      await transaction.commit();
       return res.status(201).send("User signed up successfully!");
     } catch (error) {
-      console.error("Error during signup:", error);
-      return res.status(500).send("An error occurred during signup.");
+      await transaction.rollback();
+      throw error;
     }
-  },
+  } catch (error) {
+    console.error("Error during signup:", error);
+    return res.status(500).send("An error occured during signup");
+  }},
   async login(req, res) {
     try {
       const { nickname, password } = req.body;
