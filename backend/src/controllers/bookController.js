@@ -108,12 +108,18 @@ const BookController = {
                     }
                 )
             };
-            const bookId = isbn_exists[0]?.book_id;
+            const book_id_q = await db.query(
+                "SELECT book_id FROM book WHERE isbn = :book_isbn",
+            {
+                type: QueryTypes.SELECT,
+                replacements: {book_isbn: isbn}
+            });
+            const bookId = book_id_q[0]?.book_id;
             await db.query(
-                "INSERT INTO wanted (user_id, book_id) VALUES (:userid, :bookid)",
+                "INSERT INTO wanted (user_id, book_id) VALUES (:user_id, :bookId)",
                 {
                     type: QueryTypes.INSERT,
-                    replacements: {userid: user_id, bookid: bookId}
+                    replacements: {user_id, bookId}
                 }
             );
             res.status(200).send("Book successfully added to wanted list");
@@ -151,7 +157,13 @@ const BookController = {
                     }
                 )
             };
-            const bookId = isbn_exists[0]?.book_id;
+            const book_id_q = await db.query(
+                "SELECT book_id FROM book WHERE isbn = :book_isbn",
+            {
+                type: QueryTypes.SELECT,
+                replacements: {book_isbn: isbn}
+            });
+            const bookId = book_id_q[0]?.book_id;
             await db.query(
                 "INSERT INTO ownership (user_id, book_id, condition) VALUES (:u_id, :b_id, :condition)",
                 {

@@ -49,6 +49,73 @@ const ExchangeController = {
       res.status(500).json({ error: 'Failed to add exchange' });
     }
   },
+  async findExchange(req, res) {
+    const nickname = req.user.name;
+    const user_id_q = await db.query(
+      "SELECT user_id FROM users WHERE nickname = :nickname",
+      {
+          type: QueryTypes.SELECT,
+          replacements: { nickname }
+      }
+    );
+    const user_id = user_id_q[0].user_id;
+    try {
+      const available_exchanges = await db.query(
+        `
+        WITH my_wanted_books AS (
+    SELECT book_id
+    FROM wanted
+    WHERE user_id = :my_user_id
+),
+my_ownership_books AS (
+    SELECT book_id
+    FROM ownership
+    WHERE user_id = :my_user_id
+),
+users_wanted_books AS (
+    SELECT w.user_id, b.book_id, b.title
+    FROM wanted w
+    JOIN book b ON w.book_id = b.book_id
+    WHERE w.user_id != :my_user_id
+),
+users_ownership_books AS (
+    SELECT o.user_id, b.book_id, b.title
+    FROM ownership o
+    JOIN book b ON o.book_id = b.book_id
+    WHERE o.user_id != :my_user_id
+)
+SELECT 
+    u.nickname,
+    c.city_name,
+    ctr.country_name,
+    u.email,
+    u.exchange_count,
+    STRING_AGG(DISTINCT give_books.title, ', ') AS books_i_can_give,
+    STRING_AGG(DISTINCT receive_books.title, ', ') AS books_i_can_receive
+FROM users u
+LEFT JOIN city c ON u.city_id = c.city_id
+LEFT JOIN country ctr ON c.country_id = ctr.country_id
+LEFT JOIN users_wanted_books uwb ON u.user_id = uwb.user_id
+LEFT JOIN users_ownership_books uob ON u.user_id = uob.user_id
+LEFT JOIN my_ownership_books mob ON uwb.book_id = mob.book_id
+LEFT JOIN my_wanted_books mwb ON uob.book_id = mwb.book_id
+LEFT JOIN book give_books ON mob.book_id = give_books.book_id
+LEFT JOIN book receive_books ON mwb.book_id = receive_books.book_id
+WHERE u.user_id != :my_user_id
+GROUP BY u.user_id, c.city_name, ctr.country_name, u.email, u.exchange_count
+ORDER BY u.nickname;
+        `,
+        {
+          type: QueryTypes.RAW,
+          replacements: {my_user_id: user_id}
+        }
+      );
+      res.status(200).json(available_exchanges)
+    } catch (error) {
+      console.log('Error finding exchanges', error)
+      res.status(500).json({ error: 'Failed to find exchanges' });
+    }
+  },
   async findExchangeWanted(req, res) {
     const nickname = req.user.name;
     const user_id_q = await db.query(
