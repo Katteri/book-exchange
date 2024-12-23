@@ -135,6 +135,11 @@ const AuthController = {
           `${process.env.ACCESS_TOKEN_SECRET}`,
           { expiresIn: "1h" }
         );
+        const refreshToken = jwt.sign(
+          { name: nickname },
+          `${process.env.REFRESH_TOKEN_SECRET}`,
+          { expiresIn: "1d" }
+        );
         console.log("Login successfull")
 
         return res.json({ accessToken });

@@ -17,7 +17,8 @@ const UserController = {
     }
   },
   async getOneUser(req, res) {
-    const nickname = req.params.nickname;
+    const nickname = req.user.name;
+    console.log(`REQ USER NAME ${nickname}`)
     try {
         const user = await db.query(
           'SELECT * FROM get_users_info(:nick)',
