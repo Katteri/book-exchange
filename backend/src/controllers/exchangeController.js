@@ -3,7 +3,16 @@ const db = require('../config/db');
 
 const ExchangeController = {
   async addExchange(req, res) {
-    const { isbn, give_user_id, get_nickname } = req.body;
+    const nickname = req.user.name;
+    const user_id_q = await db.query(
+      "SELECT user_id FROM users WHERE nickname = :nickname",
+      {
+        type: QueryTypes.SELECT,
+        replacements: { nickname }
+      }
+    );
+    const give_user_id = user_id_q[0].user_id;
+    const { get_nickname, isbn } = req.body;
     try {
       const exchange_date = new Date();
       const book_id = await db.query(
@@ -40,8 +49,16 @@ const ExchangeController = {
     }
   },
   async findExchangeWanted(req, res) {
+    const nickname = req.user.name;
+    const user_id_q = await db.query(
+        "SELECT user_id FROM users WHERE nickname = :nickname",
+        {
+            type: QueryTypes.SELECT,
+            replacements: { nickname }
+        }
+    );
+    const user_id = user_id_q[0].user_id;
     try {
-      const {user_id} = req.body;
       const exchanges_wanted = await db.query(
         `
         SELECT
@@ -67,8 +84,16 @@ const ExchangeController = {
     }
   },
   async findExchangeOwned(req, res) {
+    const nickname = req.user.name;
+    const user_id_q = await db.query(
+        "SELECT user_id FROM users WHERE nickname = :nickname",
+        {
+            type: QueryTypes.SELECT,
+            replacements: { nickname }
+        }
+    );
+    const user_id = user_id_q[0].user_id;
     try {
-      const {user_id} = req.body;
       const exchanges_owned = await db.query(
         `
         SELECT

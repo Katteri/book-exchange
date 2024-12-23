@@ -3,7 +3,15 @@ const db = require("../config/db");
 
 const BookController = {
     async getWantedBooks(req, res) {
-        const user_id = req.params.user_id;
+        const nickname = req.user.name;
+        const user_id_q = await db.query(
+            "SELECT user_id FROM users WHERE nickname = :nickname",
+            {
+                type: QueryTypes.SELECT,
+                replacements: { nickname }
+            }
+        );
+        const user_id = user_id_q[0].user_id;
         try {
             const wanted_books = await db.query(
                 `SELECT
@@ -32,7 +40,15 @@ const BookController = {
         };
     },
     async getOwnedBooks(req, res) {
-        const user_id = req.params.user_id;
+        const nickname = req.user.name;
+        const user_id_q = await db.query(
+            "SELECT user_id FROM users WHERE nickname = :nickname",
+            {
+                type: QueryTypes.SELECT,
+                replacements: { nickname }
+            }
+        );
+        const user_id = user_id_q[0].user_id;
         try {
             const owned_books = await db.query(
                 `
@@ -63,7 +79,16 @@ const BookController = {
         }
     },
     async addBookToWanted(req, res) {
-        const { user_id, isbn, title, first_name, middle_name, last_name, category, publish_date, language, book_series } = req.body;
+        const nickname = req.user.name;
+        const user_id_q = await db.query(
+            "SELECT user_id FROM users WHERE nickname = :nickname",
+            {
+                type: QueryTypes.SELECT,
+                replacements: { nickname }
+            }
+        );
+        const user_id = user_id_q[0].user_id;
+        const { title, isbn, language, category, first_name, middle_name, last_name, publish_date, book_series } = req.body;
         try {
             const isbn_exists = await db.query(
                 "SELECT book_id FROM book WHERE isbn = :book_isbn",
@@ -97,7 +122,16 @@ const BookController = {
         }
     },
     async addBookToOwned(req, res) {
-        const { user_id, isbn, title, first_name, middle_name, last_name, category, publish_date, language, book_series, condition } = req.body;
+        const nickname = req.user.name;
+        const user_id_q = await db.query(
+            "SELECT user_id FROM users WHERE nickname = :nickname",
+            {
+                type: QueryTypes.SELECT,
+                replacements: { nickname }
+            }
+        );
+        const user_id = user_id_q[0].user_id;
+        const { isbn, title, first_name, middle_name, last_name, category, publish_date, language, book_series, condition } = req.body;
         try {
             const isbn_exists = await db.query(
                 "SELECT book_id FROM book WHERE isbn = :book_isbn",
@@ -131,7 +165,16 @@ const BookController = {
         }
     },
     async deleteBookFromWanted(req, res) {
-        const { user_id, isbn } = req.body;
+        const nickname = req.user.name;
+        const user_id_q = await db.query(
+            "SELECT user_id FROM users WHERE nickname = :nickname",
+            {
+                type: QueryTypes.SELECT,
+                replacements: { nickname }
+            }
+        );
+        const user_id = user_id_q[0].user_id;
+        const { isbn } = req.body;
         try {
             const book = await db.query(
                 "SELECT book_id FROM book WHERE isbn = :book_isbn",
@@ -164,7 +207,16 @@ const BookController = {
         }
     },
     async deleteBookFromOwned(req, res) {
-        const { user_id, isbn } = req.body;
+        const nickname = req.user.name;
+        const user_id_q = await db.query(
+            "SELECT user_id FROM users WHERE nickname = :nickname",
+            {
+                type: QueryTypes.SELECT,
+                replacements: { nickname }
+            }
+        );
+        const user_id = user_id_q[0].user_id;
+        const { isbn } = req.body;
         try {
             const book = await db.query(
                 "SELECT book_id FROM book WHERE isbn = :book_isbn",
