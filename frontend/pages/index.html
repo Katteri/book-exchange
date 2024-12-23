@@ -23,13 +23,13 @@
           <form id="log-in" class="form__elements">
             <label class="form__input">
               <span class="text">Логин</span>
-              <input type="text" class="input" autocomplete="nickname" maxlength="30" required/>
+              <input id="nickname_login" type="text" class="input" autocomplete="nickname" maxlength="30" required/>
             </label>
             <label class="form__input">
               <span class="text">Пароль</span>
-              <input type="password" class="input" autocomplete="current-password" maxlength="40" required/>
+              <input id="password_login" type="password" class="input" autocomplete="current-password" maxlength="40" required/>
             </label>
-            <button type="submit" class="button button_submit">войти</button>
+            <button type="submit" class="button button_submit" id="submit_log-in">войти</button>
           </form>
         </div>
       </section>
@@ -37,26 +37,10 @@
         <div class="form__container" id="sign-in-form">
           <button class="button button_close" id="close_sign-in">x</button>
           <h2 class="form__header">Регистрaция</h2>
-          <form id="sign-in" class="form__elements">
+          <form id="sign-in" class="form__elements" novalidate>
             <label class="form__input">
               <span class="text">Имя пользователя</span>
-              <input type="text" class="input" autocomplete="nickname" maxlength="40" required/>
-            </label>
-            <label class="form__input">
-              <span class="text">Имя</span>
-              <input type="text" class="input" autocomplete="given-name" maxlength="40"/>
-            </label>
-            <label class="form__input">
-              <span class="text">Фамилия</span>
-              <input type="text" class="input" autocomplete="family-name" maxlength="40"/>
-            </label>
-            <label class="form__input">
-              <span class="text">Страна</span>
-              <input type="text" class="input" autocomplete="country-name" maxlength="40"/>
-            </label>
-            <label class="form__input">
-              <span class="text">Город</span>
-              <input type="text" class="input" autocomplete="off" maxlength="40"/>
+              <input type="text" class="input" id="nickname" autocomplete="nickname" maxlength="40" pattern="^[^\sА-Яа-яЁё]{3,40}$" title="Имя пользователя должно содержать только латиницу. Длина от 3 до 40 символов." required/>
             </label>
             <label class="form__input">
               <span class="text">E-mail</span>
@@ -64,13 +48,30 @@
             </label>
             <label class="form__input">
               <span class="text">Пароль</span>
-              <input type="password" class="input" autocomplete="new-password" maxlength="40" required/>
+              <input id="password" type="password" class="input" autocomplete="new-password" maxlength="40" pattern="^[^\sА-Яа-яЁё]{6,40}$" title="Длина пароля должна быть от 6 до 40." required/>
             </label>
-            <button type="submit" class="button button_submit">зарегистрироваться</button>
+            <label class="form__input">
+              <span class="text">Имя</span>
+              <input id="first_name" type="text" class="input" autocomplete="given-name" maxlength="40"/>
+            </label>
+            <label class="form__input">
+              <span class="text">Фамилия</span>
+              <input id="last_name" type="text" class="input" autocomplete="family-name" maxlength="40"/>
+            </label>
+            <label class="form__input">
+              <span class="text">Страна</span>
+              <input id="country_name" type="text" class="input" autocomplete="off" maxlength="2" pattern="^[A-Z]{2}$" title="Вводите страну в формате ISO 3166 alpha-2" required/>
+            </label>
+            <label class="form__input">
+              <span class="text">Город</span>
+              <input id="city_name" type="text" class="input" autocomplete="off" maxlength="40" required/>
+            </label>
+            <button type="submit" class="button button_submit" id="submit_sign-up">зарегистрироваться</button>
           </form>
         </div>  
       </section>
     </div>
     <script src="../scripts/index.js"></script>
+    <script src="../scripts/authScript.js"></script>
 </body>
 </html>

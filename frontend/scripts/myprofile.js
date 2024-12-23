@@ -34,4 +34,5 @@ document.getElementById('close_add-mybook').addEventListener('click', (event) =>
 // exit from the system, needs to update unauth
 document.getElementById('button_exit').addEventListener('click', (event) => {
   window.location.href = './index.html';
+  localStorage.clear();
 });

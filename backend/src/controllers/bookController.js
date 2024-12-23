@@ -117,7 +117,7 @@ const BookController = {
         };
     },
     async getOwnedBooks(req, res) {
-        const nickname = req.pawams.nickname;
+        const nickname = req.params.nickname;
         const user_id_q = await db.query(
             "SELECT user_id FROM users WHERE nickname = :nickname",
             {

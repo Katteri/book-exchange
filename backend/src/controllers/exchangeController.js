@@ -90,8 +90,8 @@ SELECT
     ctr.country_name,
     u.email,
     u.exchange_count,
-    STRING_AGG(DISTINCT give_books.title, ', ') AS books_i_can_give,
-    STRING_AGG(DISTINCT receive_books.title, ', ') AS books_i_can_receive
+    STRING_AGG(DISTINCT give_books.title, '+') AS books_i_can_give,
+    STRING_AGG(DISTINCT receive_books.title, '+') AS books_i_can_receive
 FROM users u
 LEFT JOIN city c ON u.city_id = c.city_id
 LEFT JOIN country ctr ON c.country_id = ctr.country_id
