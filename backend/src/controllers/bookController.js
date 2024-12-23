@@ -3,7 +3,7 @@ const { QueryTypes, json } = require('sequelize');
 const db = require("../config/db");
 
 const BookController = {
-    async getWantedBooks(req, res) {
+    async getMyWantedBooks(req, res) {
         const nickname = req.user.name;
         const user_id_q = await db.query(
             "SELECT user_id FROM users WHERE nickname = :nickname",
@@ -40,8 +40,84 @@ const BookController = {
             res.status(500).json({ error: 'Failed to find wanted books'});
         };
     },
-    async getOwnedBooks(req, res) {
+    async getMyOwnedBooks(req, res) {
         const nickname = req.user.name;
+        const user_id_q = await db.query(
+            "SELECT user_id FROM users WHERE nickname = :nickname",
+            {
+                type: QueryTypes.SELECT,
+                replacements: { nickname }
+            }
+        );
+        const user_id = user_id_q[0].user_id;
+        try {
+            const owned_books = await db.query(
+                `
+                SELECT
+                    o.book_id,
+                    b.isbn,
+                    gbi.title,
+                    gbi.author_name,
+                    o.condition,
+                    gbi.category_name,
+                    gbi.publish_date,
+                    gbi.language,
+                    gbi.series_name
+                FROM ownership o
+                LEFT JOIN book b ON b.book_id = o.book_id
+                LEFT JOIN LATERAL get_book_info(b.isbn) gbi ON TRUE
+                WHERE o.user_id = :u_id
+                `,
+                {
+                    type: QueryTypes.SELECT,
+                    replacements: {u_id: user_id}
+                }
+            );
+            res.status(200).json(owned_books);
+        } catch (error) {
+            console.error('Error finding book:', error);
+            res.status(500).json({ error: 'Failed to find owned books'});
+        }
+    },
+    async getWantedBooks(req, res) {
+        const nickname = req.params.nickname;
+        const user_id_q = await db.query(
+            "SELECT user_id FROM users WHERE nickname = :nickname",
+            {
+                type: QueryTypes.SELECT,
+                replacements: { nickname }
+            }
+        );
+        const user_id = user_id_q[0].user_id;
+        try {
+            const wanted_books = await db.query(
+                `SELECT
+                    w.book_id,
+                    b.isbn,
+                    gbi.title,
+                    gbi.author_name,
+                    gbi.category_name,
+                    gbi.publish_date,
+                    gbi.language,
+                    gbi.series_name
+                FROM wanted w
+                LEFT JOIN book b ON b.book_id = w.book_id
+                LEFT JOIN LATERAL get_book_info(b.isbn) gbi ON TRUE
+                WHERE w.user_id = :u_id
+                `,
+                {
+                    type: QueryTypes.SELECT,
+                    replacements: { u_id: user_id }
+                }
+            );
+            res.status(200).json(wanted_books);
+        } catch (error) {
+            console.error('Error finding book:', error);
+            res.status(500).json({ error: 'Failed to find wanted books'});
+        };
+    },
+    async getOwnedBooks(req, res) {
+        const nickname = req.pawams.nickname;
         const user_id_q = await db.query(
             "SELECT user_id FROM users WHERE nickname = :nickname",
             {

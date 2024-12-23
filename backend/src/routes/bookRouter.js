@@ -10,7 +10,10 @@ router.post("/owned/add", authenticateToken, BookController.addBookToOwned);
 router.delete("/wanted/delete", authenticateToken, BookController.deleteBookFromWanted);
 router.delete("/owned/delete", authenticateToken, BookController.deleteBookFromOwned);
 
-router.get("/wanted/get", authenticateToken, BookController.getWantedBooks);
-router.get("/owned/get", authenticateToken, BookController.getOwnedBooks);
+router.get("/wanted/get", authenticateToken, BookController.getMyWantedBooks);
+router.get("/owned/get", authenticateToken, BookController.getMyOwnedBooks);
+
+router.get("/wanted/get/:nickname", authenticateToken, BookController.getWantedBooks);
+router.get("/owned/get/:nickname", authenticateToken, BookController.getOwnedBooks);
 
 module.exports = router;
