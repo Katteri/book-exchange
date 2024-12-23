@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { QueryTypes, json } = require('sequelize');
 const db = require("../config/db");
 
