@@ -23,23 +23,23 @@ const ExchangeController = {
         }
       );
       const bookId = book_id[0]?.book_id;
-      const get_user_id = await db.query(
+      const get_user_id_q = await db.query(
         'SELECT user_id FROM users WHERE nickname = :nick',
         {
           type: QueryTypes.SELECT,
           replacements: {nick: get_nickname}
         }
       );
-      const getuser_id = get_user_id[0]?.user_id;
+      const get_user_id = get_user_id_q[0]?.user_id;
       await db.query(
         `
         INSERT INTO
         exchange(book_id, give_user_id, get_user_id, exchange_date)
-        VALUES (:bookid, :give_uid, :get_uid, :exch_date)
+        VALUES (:bookId, :give_user_id, :get_user_id, :exchange_date)
         `, 
         {
           type: QueryTypes.INSERT,
-          replacements: {bookid: bookId, give_uid: give_user_id, get_uid: getuser_id, exch_date: exchange_date}
+          replacements: {bookId, give_user_id, get_user_id, exchange_date}
         }
       );
       res.status(200).send("Exchange added sucessfully");
