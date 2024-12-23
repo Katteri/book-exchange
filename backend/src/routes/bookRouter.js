@@ -2,13 +2,13 @@ const express = require("express");
 const BookController = require("../controllers/bookController");
 const router = express.Router();
 
-router.post("/wanted/add", BookController.addBookToWanted);
-router.post("/owned/add", BookController.addBookToOwned);
+router.post("/wanted/add", authenticateToken, BookController.addBookToWanted);
+router.post("/owned/add", authenticateToken, BookController.addBookToOwned);
 
-router.delete("/wanted/delete", BookController.deleteBookFromWanted);
-router.delete("/owned/delete", BookController.deleteBookFromOwned);
+router.delete("/wanted/delete", authenticateToken, BookController.deleteBookFromWanted);
+router.delete("/owned/delete", authenticateToken, BookController.deleteBookFromOwned);
 
-router.get("/wanted/:user_id", BookController.getWantedBooks);
-router.get("/owned/:user_id", BookController.getOwnedBooks);
+router.get("/wanted/get", authenticateToken, BookController.getWantedBooks);
+router.get("/owned/get", authenticateToken, BookController.getOwnedBooks);
 
 module.exports = router;
