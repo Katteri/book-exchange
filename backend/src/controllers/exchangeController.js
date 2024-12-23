@@ -62,27 +62,27 @@ const ExchangeController = {
     try {
       const available_exchanges = await db.query(
         `
-        WITH my_wanted_books AS (
+        select * from (WITH my_wanted_books AS (
     SELECT book_id
     FROM wanted
-    WHERE user_id = :my_user_id
+    WHERE user_id = 1
 ),
 my_ownership_books AS (
     SELECT book_id
     FROM ownership
-    WHERE user_id = :my_user_id
+    WHERE user_id = 1
 ),
 users_wanted_books AS (
     SELECT w.user_id, b.book_id, b.title
     FROM wanted w
     JOIN book b ON w.book_id = b.book_id
-    WHERE w.user_id != :my_user_id
+    WHERE w.user_id != 1
 ),
 users_ownership_books AS (
     SELECT o.user_id, b.book_id, b.title
     FROM ownership o
     JOIN book b ON o.book_id = b.book_id
-    WHERE o.user_id != :my_user_id
+    WHERE o.user_id != 1
 )
 SELECT 
     u.nickname,
@@ -101,9 +101,9 @@ LEFT JOIN my_ownership_books mob ON uwb.book_id = mob.book_id
 LEFT JOIN my_wanted_books mwb ON uob.book_id = mwb.book_id
 LEFT JOIN book give_books ON mob.book_id = give_books.book_id
 LEFT JOIN book receive_books ON mwb.book_id = receive_books.book_id
-WHERE u.user_id != :my_user_id
+WHERE u.user_id != 1
 GROUP BY u.user_id, c.city_name, ctr.country_name, u.email, u.exchange_count
-ORDER BY u.nickname;
+ORDER BY u.nickname) as exchange where books_i_can_give is not null or books_i_can_receive is not null
         `,
         {
           type: QueryTypes.RAW,
