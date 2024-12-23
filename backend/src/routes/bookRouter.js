@@ -1,6 +1,7 @@
 const express = require("express");
 const BookController = require("../controllers/bookController");
 const router = express.Router();
+const authenticateToken = require('../middlewares/auth')
 
 router.post("/wanted/add", authenticateToken, BookController.addBookToWanted);
 router.post("/owned/add", authenticateToken, BookController.addBookToOwned);
