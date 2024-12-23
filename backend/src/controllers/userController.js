@@ -17,14 +17,30 @@ const UserController = {
       res.status(500).json({ error: 'Failed to fetch users' });
     }
   },
-  async getOneUser(req, res) {
+  async getUserPage(req, res) {
     const nickname = req.user.name;
     try {
         const user = await db.query(
-          'SELECT * FROM get_users_info(:nick)',
+          'SELECT * FROM get_users_info(:nickname)',
           {
             type: QueryTypes.SELECT,
-            replacements: { nick: nickname }
+            replacements: { nickname }
+          }
+        );
+        res.status(200).json(user);
+    } catch (error) {
+        console.error('Error fetching user:', error);
+        res.status(500).json({ error: 'Failed to find user' });
+    }
+  },
+  async getOneUser(req, res) {
+    const nickname = req.params.nickname;
+    try {
+        const user = await db.query(
+          'SELECT * FROM get_users_info(:nickname)',
+          {
+            type: QueryTypes.SELECT,
+            replacements: { nickname }
           }
         );
         res.status(200).json(user);
