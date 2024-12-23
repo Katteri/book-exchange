@@ -32,6 +32,10 @@ function getNormalName(name) {
   return name;
 }
 
+function capitalize(word) {
+  return word[0].toUpperCase() + word.slice(1, word.length).toLowerCase();
+}
+
 async function addOwnBook(event) {
   event.preventDefault();
   const form = event.target;
@@ -42,11 +46,11 @@ async function addOwnBook(event) {
     language: form.language.value,
     publish_date: form.date.value || null,
     condition: conditionNorm[form.condition.value],
-    category: form.category.value.trim() || null,
+    category: capitalize(form.category.value.trim()) || null,
     book_series: form.book_series.value.trim() || null,
     first_name: form.first_name.value.trim() || null,
     middle_name: form.middle_name.value.trim() || null,
-    last_name: form.last_name.value.trim()
+    last_name: capitalize(form.last_name.value.trim())
   };
 
   try {
@@ -81,11 +85,11 @@ async function addWantedBook(event) {
     title: form.title.value.trim(),
     language: form.language.value,
     publish_date: form.date.value || null,
-    category: form.category.value.trim() || null,
+    category: capitalize(form.category.value.trim()) || null,
     book_series: form.book_series.value.trim() || null,
     first_name: form.first_name.value.trim() || null,
     middle_name: form.middle_name.value.trim() || null,
-    last_name: form.last_name.value.trim()
+    last_name: capitalize(form.last_name.value.trim())
   };
 
   try {

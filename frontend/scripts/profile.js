@@ -166,7 +166,6 @@ fetch(USER_API, {
     return response.json();
   })
   .then((data) => {
-    console.log(data[0]);
     loadUserInfo(data[0]);
     getWantedBooks();
     getOwnBooks();

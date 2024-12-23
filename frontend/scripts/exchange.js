@@ -2,34 +2,37 @@ const GET_EXCHANGE_API = 'http://localhost:3000/exchange/find';
 
 const token = localStorage.getItem("accessToken");
 
+function getBooksHTML(Books, text){
+  if (Books !== null && Books.includes('+')) {
+    Books = Books.split('+');
+  }
+  var HTML = '';
+  if (Books === null || Array.isArray(Books) && Books.length === 0) {
+    HTML = `<p class="text text_default">${text}</p>`;
+  } else if (Array.isArray(Books) && Books.length > 1){
+    Books.forEach(book => {
+      HTML += `<p class="text text_default">${book}</p>`;
+    });
+  } else {
+    HTML = `<p class="text text_default">${Books}</p>`;
+  };
+  return HTML;
+}
+
 function loadExchange(data) {
   const container = document.getElementById('container-exchange');
   container.innerHTML = '';
 
   if (data.length === 0) {
-    container.innerHTML = '<p class="text text_default" style="margin-left: 2vw">Нет возможных обменов</p>';
+    container.innerHTML = '<p class="text text_default" style="margin-top: 3vw">Нет возможных обменов</p>';
     return;
   }
   data.forEach(user => {
-    const wantedBooks = user.books_i_can_give.split('+');
-    var wantedHTML = '';
-    if (wantedBooks.length === 0) {
-      wantedHTML = '<p class="text text_default">От вас ничего не нужно</p>';
-    } else {
-      wantedBooks.forEach(book => {
-        wantedHTML += `<p class="text text_default">${book}</p>`;
-      });
-    }
+    let wantedBooks = user.books_i_can_give;
+    const wantedHTML = getBooksHTML(wantedBooks, 'От вас ничего не нужно');
 
-    const ownBooks = user.books_i_can_receive.split('+');
-    var ownHTML = '';
-    if (ownBooks.length === 0) {
-      ownHTML = '<p class="text text_default">Вам ничего не нужно</p>';
-    } else {
-      ownBooks.forEach(book => {
-        ownHTML += `<p class="text text_default">${book}</p>`;
-      });
-    }
+    let ownBooks = user.books_i_can_receive;
+    const ownHTML = getBooksHTML(ownBooks, 'Вам ничего не нужно');
 
     const userRow = document.createElement('div');
     userRow.className = 'row';
@@ -57,7 +60,6 @@ function loadExchange(data) {
       window.location.href = './profile.html';
     });
   });
-  console.log(data);
 }
 
 fetch(GET_EXCHANGE_API, {
