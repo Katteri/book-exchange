@@ -8,8 +8,6 @@ const authenticateToken = (req, res, next) => {
         console.error("Token not provided")
         return res.status(401).send("Access denied. No token provided")
     }
-    console.log("Received Token:", token);
-    console.log("")
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
         if (err) {
             console.error("Token verification error:", err.message);
