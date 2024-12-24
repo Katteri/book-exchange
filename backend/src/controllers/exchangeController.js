@@ -65,24 +65,24 @@ const ExchangeController = {
         SELECT * FROM (WITH my_wanted_books AS (
             SELECT book_id
             FROM wanted
-            WHERE user_id = :my_user_id
+            WHERE user_id = :user_id
         ),
         my_ownership_books AS (
             SELECT book_id
             FROM ownership
-            WHERE user_id = :my_user_id
+            WHERE user_id = :user_id
         ),
         users_wanted_books AS (
             SELECT w.user_id, b.book_id, b.title
             FROM wanted w
             JOIN book b ON w.book_id = b.book_id
-            WHERE w.user_id != :my_user_id
+            WHERE w.user_id != :user_id
         ),
         users_ownership_books AS (
             SELECT o.user_id, b.book_id, b.title
             FROM ownership o
             JOIN book b ON o.book_id = b.book_id
-            WHERE o.user_id != :my_user_id
+            WHERE o.user_id != :user_id
         )
         SELECT 
             u.nickname,
