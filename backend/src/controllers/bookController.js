@@ -157,51 +157,81 @@ const BookController = {
     },
     async addBookToWanted(req, res) {
         const nickname = req.user.name;
-        const user_id_q = await db.query(
-            "SELECT user_id FROM users WHERE nickname = :nickname",
-            {
-                type: QueryTypes.SELECT,
-                replacements: { nickname }
-            }
-        );
-        const user_id = user_id_q[0].user_id;
         const { title, isbn, language, category, first_name, middle_name, last_name, publish_date, book_series } = req.body;
         try {
-            const isbn_exists = await db.query(
-                "SELECT book_id FROM book WHERE isbn = :isbn",
-            {
-                type: QueryTypes.SELECT,
-                replacements: {isbn}
-            });
-            if (isbn_exists.length === 0) {
-                const jsonData = JSON.stringify([{
-                    isbn, title, first_name, middle_name, last_name, category, publish_date, language, book_series
-                }])
-                await db.query("CALL add_books_bulk(:jsonData)",
-                    {
-                        type: QueryTypes.RAW,
-                        replacements: { jsonData }
-                    }
-                )
-            };
-            const book_id_q = await db.query(
-                "SELECT book_id FROM book WHERE isbn = :isbn",
-            {
-                type: QueryTypes.SELECT,
-                replacements: { isbn }
-            });
-            const bookId = book_id_q[0]?.book_id;
-            await db.query(
-                "INSERT INTO wanted (user_id, book_id) VALUES (:user_id, :bookId)",
+            const transaction = await db.transaction();
+            const user_id_q = await db.query(
+                "SELECT user_id FROM users WHERE nickname = :nickname",
                 {
-                    type: QueryTypes.INSERT,
-                    replacements: {user_id, bookId}
+                    type: QueryTypes.SELECT,
+                    replacements: { nickname },
+                    transaction
                 }
             );
+            const user_id = user_id_q[0]?.user_id;
+            if (!user_id) {
+                throw new Error("User not found");
+            }
+            const isbn_exists = await db.query(
+                "SELECT book_id FROM book WHERE isbn = :isbn",
+                {
+                    type: QueryTypes.SELECT,
+                    replacements: { isbn },
+                    transaction
+                }
+            );
+            if (isbn_exists.length === 0) {
+                const savepoint1 = await transaction.savepoint();
+                try {
+                    const jsonData = JSON.stringify([{
+                        isbn, title, first_name, middle_name, last_name, category, publish_date, language, book_series
+                    }]);
+                    await db.query(
+                        "CALL add_books_bulk(:jsonData)",
+                        {
+                            type: QueryTypes.RAW,
+                            replacements: { jsonData },
+                            transaction
+                        }
+                    );
+                } catch (error) {
+                    console.error("Error adding book:", error);
+                    await savepoint1.rollback();
+                    throw new Error("Failed to add the book to the database");
+                }
+            }
+            const book_id_q = await db.query(
+                "SELECT book_id FROM book WHERE isbn = :isbn",
+                {
+                    type: QueryTypes.SELECT,
+                    replacements: { isbn },
+                    transaction
+                }
+            );
+            const bookId = book_id_q[0]?.book_id;
+            if (!bookId) {
+                throw new Error("Book ID not found after insertion");
+            }
+            const savepoint2 = await transaction.savepoint();
+            try {
+                await db.query(
+                    "INSERT INTO wanted (user_id, book_id) VALUES (:user_id, :bookId)",
+                    {
+                        type: QueryTypes.INSERT,
+                        replacements: { user_id, bookId },
+                        transaction
+                    }
+                );
+            } catch (error) {
+                console.error("Error adding book to wanted list:", error);
+                await savepoint2.rollback();
+                throw new Error("Failed to add book to wanted list");
+            }
+            await transaction.commit();
             res.status(200).send("Book successfully added to wanted list");
         } catch (error) {
-            console.error('Error adding book to wanted list:', error);
-            res.status(500).json({ error: 'Failed to add book'});
+            console.error("Error adding book to wanted list:", error);
+            res.status(500).json({ error: error.message || "Failed to add book" });
         }
     },
     async addBookToOwned(req, res) {
