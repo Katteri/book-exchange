@@ -70,6 +70,7 @@ fetch(GET_EXCHANGE_API, {
   },
 }).then((response) => {
     if (!response.ok) {
+      document.getElementById('container-exchange').innerHTML = '<p class="text text_default" style="margin-top: 3vw">Не удалось получить информацию об обменах.</p>';
       throw new Error("Failed to load exchange.");
     }
     return response.json();
