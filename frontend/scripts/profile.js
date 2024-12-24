@@ -97,14 +97,8 @@ function loadWantBooks(books) {
       <p class="text">${book.author_name}</p>
       <p class="text">${book.category_name}</p>
       <p class="text">${(book.publish_date)? book.publish_date.slice(0, 4) : ''}</p>
-      <button id='delete-wanted' class="button button_delete" data-id="${book.isbn}">удалить</button>
     `;
     container.appendChild(bookCard);
-  });
-
-  const deleteButtons = document.querySelectorAll('.button_delete');
-  deleteButtons.forEach(button => {
-    button.addEventListener('click', () => deleteWantedBook(button.dataset.id));
   });
 }
 
@@ -132,14 +126,8 @@ function loadOwnBooks(books) {
       <p class="text">${book.category_name}</p>
       <p class="text">${(book.publish_date)? book.publish_date.slice(0, 4) : ''}</p>
       <p class="text">Состояние: ${getConditionNorm(book.condition)}</p>
-      <button id='delete-own' class="button button_delete" data-id="${book.isbn}">удалить</button>
     `;
     container.appendChild(bookCard);
-  });
-
-  const deleteButtons = document.querySelectorAll('.button_delete');
-  deleteButtons.forEach(button => {
-    button.addEventListener('click', () => deleteOwnBook(button.dataset.id));
   });
 }
 
