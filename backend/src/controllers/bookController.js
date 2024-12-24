@@ -165,7 +165,7 @@ const BookController = {
             }
         );
         const user_id = user_id_q[0].user_id;
-        const { title, isbn, language, category, first_name, middle_name, last_name, publish_date, book_series } = req.body;
+        const { isbn, title, language, publish_date, category, book_series, first_name, middle_name, last_name } = req.body;
         try {
             const isbn_exists = await db.query(
                 "SELECT book_id FROM book WHERE isbn = :isbn",
@@ -214,7 +214,7 @@ const BookController = {
             }
         );
         const user_id = user_id_q[0].user_id;
-        const { isbn, title, first_name, middle_name, last_name, category, publish_date, language, book_series, condition } = req.body;
+        const { isbn, title, language, publish_date, condition, category, book_series, first_name, middle_name, last_name } = req.body;
         try {
             const isbn_exists = await db.query(
                 "SELECT book_id FROM book WHERE isbn = :isbn",
