@@ -17,18 +17,18 @@ const ExchangeController = {
     try {
       const exchange_date = new Date();
       const book_id = await db.query(
-        'SELECT book_id FROM book WHERE isbn = :book_isbn',
+        'SELECT book_id FROM book WHERE isbn = :isbn',
         {
           type: QueryTypes.SELECT,
-          replacements: {book_isbn: isbn}
+          replacements: { isbn }
         }
       );
       const bookId = book_id[0]?.book_id;
       const get_user_id_q = await db.query(
-        'SELECT user_id FROM users WHERE nickname = :nick',
+        'SELECT user_id FROM users WHERE nickname = :get_nickname',
         {
           type: QueryTypes.SELECT,
-          replacements: {nick: get_nickname}
+          replacements: { get_nickname }
         }
       );
       const get_user_id = get_user_id_q[0]?.user_id;
@@ -40,7 +40,7 @@ const ExchangeController = {
         `, 
         {
           type: QueryTypes.INSERT,
-          replacements: {bookId, give_user_id, get_user_id, exchange_date}
+          replacements: { bookId, give_user_id, get_user_id, exchange_date }
         }
       );
       res.status(200).send("Exchange added sucessfully");
@@ -62,52 +62,53 @@ const ExchangeController = {
     try {
       const available_exchanges = await db.query(
         `
-        select * from (WITH my_wanted_books AS (
-    SELECT book_id
-    FROM wanted
-    WHERE user_id = :my_user_id
-),
-my_ownership_books AS (
-    SELECT book_id
-    FROM ownership
-    WHERE user_id = :my_user_id
-),
-users_wanted_books AS (
-    SELECT w.user_id, b.book_id, b.title
-    FROM wanted w
-    JOIN book b ON w.book_id = b.book_id
-    WHERE w.user_id != :my_user_id
-),
-users_ownership_books AS (
-    SELECT o.user_id, b.book_id, b.title
-    FROM ownership o
-    JOIN book b ON o.book_id = b.book_id
-    WHERE o.user_id != :my_user_id
-)
-SELECT 
-    u.nickname,
-    c.city_name,
-    ctr.country_name,
-    u.email,
-    u.exchange_count,
-    STRING_AGG(DISTINCT give_books.title, '+') AS books_i_can_give,
-    STRING_AGG(DISTINCT receive_books.title, '+') AS books_i_can_receive
-FROM users u
-LEFT JOIN city c ON u.city_id = c.city_id
-LEFT JOIN country ctr ON c.country_id = ctr.country_id
-LEFT JOIN users_wanted_books uwb ON u.user_id = uwb.user_id
-LEFT JOIN users_ownership_books uob ON u.user_id = uob.user_id
-LEFT JOIN my_ownership_books mob ON uwb.book_id = mob.book_id
-LEFT JOIN my_wanted_books mwb ON uob.book_id = mwb.book_id
-LEFT JOIN book give_books ON mob.book_id = give_books.book_id
-LEFT JOIN book receive_books ON mwb.book_id = receive_books.book_id
-WHERE u.user_id != :my_user_id
-GROUP BY u.user_id, c.city_name, ctr.country_name, u.email, u.exchange_count
-ORDER BY u.nickname) as exchange where books_i_can_give is not null or books_i_can_receive is not null
+        SELECT * FROM (WITH my_wanted_books AS (
+            SELECT book_id
+            FROM wanted
+            WHERE user_id = :my_user_id
+        ),
+        my_ownership_books AS (
+            SELECT book_id
+            FROM ownership
+            WHERE user_id = :my_user_id
+        ),
+        users_wanted_books AS (
+            SELECT w.user_id, b.book_id, b.title
+            FROM wanted w
+            JOIN book b ON w.book_id = b.book_id
+            WHERE w.user_id != :my_user_id
+        ),
+        users_ownership_books AS (
+            SELECT o.user_id, b.book_id, b.title
+            FROM ownership o
+            JOIN book b ON o.book_id = b.book_id
+            WHERE o.user_id != :my_user_id
+        )
+        SELECT 
+            u.nickname,
+            c.city_name,
+            ctr.country_name,
+            u.email,
+            u.exchange_count,
+            STRING_AGG(DISTINCT give_books.title, '+') AS books_i_can_give,
+            STRING_AGG(DISTINCT receive_books.title, '+') AS books_i_can_receive
+        FROM users u
+        LEFT JOIN city c ON u.city_id = c.city_id
+        LEFT JOIN country ctr ON c.country_id = ctr.country_id
+        LEFT JOIN users_wanted_books uwb ON u.user_id = uwb.user_id
+        LEFT JOIN users_ownership_books uob ON u.user_id = uob.user_id
+        LEFT JOIN my_ownership_books mob ON uwb.book_id = mob.book_id
+        LEFT JOIN my_wanted_books mwb ON uob.book_id = mwb.book_id
+        LEFT JOIN book give_books ON mob.book_id = give_books.book_id
+        LEFT JOIN book receive_books ON mwb.book_id = receive_books.book_id
+        WHERE u.user_id != :user_id
+        GROUP BY u.user_id, c.city_name, ctr.country_name, u.email, u.exchange_count
+        ORDER BY u.nickname
+        ) AS exchange WHERE books_i_can_give IS NOT NULL books_i_can_receive IS NOT NULL
         `,
         {
           type: QueryTypes.RAW,
-          replacements: {my_user_id: user_id}
+          replacements: { user_id }
         }
       );
       res.status(200).json(available_exchanges)
@@ -142,7 +143,7 @@ ORDER BY u.nickname) as exchange where books_i_can_give is not null or books_i_c
         `,
         {
           type: QueryTypes.SELECT,
-          replacements: {user_id: user_id}
+          replacements: { user_id }
         }
       );
       res.status(200).json(exchanges_wanted);
@@ -173,11 +174,11 @@ ORDER BY u.nickname) as exchange where books_i_can_give is not null or books_i_c
         JOIN book USING(book_id)
         JOIN author a USING(author_id)
         JOIN city USING(city_id)
-        WHERE user_id = :userId
+        WHERE user_id = :user_id
         `,
       {
         type: QueryTypes.SELECT,
-        replacements: {userId: user_id}
+        replacements: { user_id }
       });
       res.status(200).json(exchanges_owned);
     } catch (error) {

@@ -22,15 +22,15 @@ const AuthController = {
       const saltRounds = 10;
       const hashedPassword = await bcrypt.hash(password, saltRounds);
       
-      const finding_country = await db.query( // вытягиваем айди страны по имени
+      const finding_country = await db.query(
         "SELECT country_id FROM country WHERE country_name = :country_name",
         {
           type: QueryTypes.SELECT,
           replacements: { country_name }
         }
       );
-      if (finding_country.length === 0) { // если страны не нашлось
-        await db.query( // добавляем страну
+      if (finding_country.length === 0) {
+        await db.query(
           "INSERT INTO country (country_name) VALUES (:country_name)",
           {
             type: QueryTypes.INSERT,
@@ -38,16 +38,16 @@ const AuthController = {
           }
         )
       }
-      const country_id_q = await db.query( // вытягиваем айди страны
+      const country_id_q = await db.query(
         "SELECT country_id FROM country WHERE country_name = :country_name",
         {
           type: QueryTypes.SELECT,
           replacements: { country_name }
         }
       )
-      const country_id = country_id_q[0].country_id // берем айди страны
+      const country_id = country_id_q[0].country_id
 
-      const finding_city = await db.query( // ищем город в такой стране
+      const finding_city = await db.query(
         `SELECT city_id 
         FROM city 
         WHERE city_name = :city_name AND country_id = :country_id`,
@@ -56,8 +56,8 @@ const AuthController = {
           replacements: { city_name, country_id }
         }
       )
-      if (finding_city.length === 0) { // если не нашлось города
-        await db.query( // создаем его
+      if (finding_city.length === 0) {
+        await db.query(
           "INSERT INTO city (city_name, country_id) VALUES (:city_name, :country_id)",
           {
             type: QueryTypes.INSERT,
@@ -65,15 +65,15 @@ const AuthController = {
           }
         )
       }
-      const city_id_q = await db.query( // вытягиваем айди города
+      const city_id_q = await db.query(
         `SELECT city_id FROM city WHERE city_name = :city_name AND country_id = :country_id`,
         {
           type: QueryTypes.SELECT,
           replacements: { city_name, country_id }
         }
       )
-      const city_id = city_id_q[0].city_id // достаем айди города
-      await db.query( // добавлямем юзера
+      const city_id = city_id_q[0].city_id
+      await db.query(
         `
         INSERT INTO users (nickname, first_name, last_name, city_id, country_id, email)
         VALUES (:nickname, :first_name, :last_name, :city_id, :country_id, :email)
@@ -83,15 +83,15 @@ const AuthController = {
           replacements: { nickname, first_name, last_name, city_id, country_id, email }
         }
       );
-      const userIdResult = await db.query( // берем айди добавленного юзера по введенному нику
+      const userIdResult = await db.query(
         `SELECT user_id from users WHERE nickname = :nickname`,
         {
           type: QueryTypes.SELECT,
           replacements: { nickname }
         }
       );
-      const user_id = userIdResult[0].user_id; // айди юзера
-      await db.query( // добавляем пароль
+      const user_id = userIdResult[0].user_id;
+      await db.query(
         `
         INSERT INTO passwd (user_id, password_hash)
         VALUES (:user_id, :hashedPassword)
@@ -135,11 +135,6 @@ const AuthController = {
           `${process.env.ACCESS_TOKEN_SECRET}`,
           { expiresIn: "1h" }
         );
-        // const refreshToken = jwt.sign(
-        //   { name: nickname },
-        //   `${process.env.REFRESH_TOKEN_SECRET}`,
-        //   { expiresIn: "1d" }
-        // );
         console.log("Login successfull")
 
         return res.json({ accessToken });

@@ -27,11 +27,11 @@ const BookController = {
                 FROM wanted w
                 LEFT JOIN book b ON b.book_id = w.book_id
                 LEFT JOIN LATERAL get_book_info(b.isbn) gbi ON TRUE
-                WHERE w.user_id = :u_id
+                WHERE w.user_id = :user_id
                 `,
                 {
                     type: QueryTypes.SELECT,
-                    replacements: { u_id: user_id }
+                    replacements: { user_id }
                 }
             );
             res.status(200).json(wanted_books);
@@ -66,11 +66,11 @@ const BookController = {
                 FROM ownership o
                 LEFT JOIN book b ON b.book_id = o.book_id
                 LEFT JOIN LATERAL get_book_info(b.isbn) gbi ON TRUE
-                WHERE o.user_id = :u_id
+                WHERE o.user_id = :user_id
                 `,
                 {
                     type: QueryTypes.SELECT,
-                    replacements: {u_id: user_id}
+                    replacements: { user_id }
                 }
             );
             res.status(200).json(owned_books);
@@ -103,11 +103,11 @@ const BookController = {
                 FROM wanted w
                 LEFT JOIN book b ON b.book_id = w.book_id
                 LEFT JOIN LATERAL get_book_info(b.isbn) gbi ON TRUE
-                WHERE w.user_id = :u_id
+                WHERE w.user_id = :user_id
                 `,
                 {
                     type: QueryTypes.SELECT,
-                    replacements: { u_id: user_id }
+                    replacements: { user_id }
                 }
             );
             res.status(200).json(wanted_books);
@@ -142,11 +142,11 @@ const BookController = {
                 FROM ownership o
                 LEFT JOIN book b ON b.book_id = o.book_id
                 LEFT JOIN LATERAL get_book_info(b.isbn) gbi ON TRUE
-                WHERE o.user_id = :u_id
+                WHERE o.user_id = :user_id
                 `,
                 {
                     type: QueryTypes.SELECT,
-                    replacements: {u_id: user_id}
+                    replacements: { user_id }
                 }
             );
             res.status(200).json(owned_books);
@@ -168,27 +168,27 @@ const BookController = {
         const { title, isbn, language, category, first_name, middle_name, last_name, publish_date, book_series } = req.body;
         try {
             const isbn_exists = await db.query(
-                "SELECT book_id FROM book WHERE isbn = :book_isbn",
+                "SELECT book_id FROM book WHERE isbn = :isbn",
             {
                 type: QueryTypes.SELECT,
-                replacements: {book_isbn: isbn}
+                replacements: {isbn}
             });
             if (isbn_exists.length === 0) {
                 const jsonData = JSON.stringify([{
                     isbn, title, first_name, middle_name, last_name, category, publish_date, language, book_series
                 }])
-                await db.query("CALL add_books_bulk(:json_data)",
+                await db.query("CALL add_books_bulk(:jsonData)",
                     {
                         type: QueryTypes.RAW,
-                        replacements: {json_data: jsonData}
+                        replacements: { jsonData }
                     }
                 )
             };
             const book_id_q = await db.query(
-                "SELECT book_id FROM book WHERE isbn = :book_isbn",
+                "SELECT book_id FROM book WHERE isbn = :isbn",
             {
                 type: QueryTypes.SELECT,
-                replacements: {book_isbn: isbn}
+                replacements: { isbn }
             });
             const bookId = book_id_q[0]?.book_id;
             await db.query(
@@ -217,34 +217,34 @@ const BookController = {
         const { isbn, title, first_name, middle_name, last_name, category, publish_date, language, book_series, condition } = req.body;
         try {
             const isbn_exists = await db.query(
-                "SELECT book_id FROM book WHERE isbn = :book_isbn",
+                "SELECT book_id FROM book WHERE isbn = :isbn",
             {
                 type: QueryTypes.SELECT,
-                replacements: {book_isbn: isbn}
+                replacements: { isbn }
             });
             if (isbn_exists.length === 0) {
                 const jsonData = JSON.stringify([{
                     isbn, title, first_name, middle_name, last_name, category, publish_date, language, book_series, condition
                 }])
-                await db.query("CALL add_books_bulk(:json_data)",
+                await db.query("CALL add_books_bulk(:jsonData)",
                     {
                         type: QueryTypes.RAW,
-                        replacements: {json_data: jsonData}
+                        replacements: { jsonData }
                     }
                 )
             };
             const book_id_q = await db.query(
-                "SELECT book_id FROM book WHERE isbn = :book_isbn",
+                "SELECT book_id FROM book WHERE isbn = :isbn",
             {
                 type: QueryTypes.SELECT,
-                replacements: {book_isbn: isbn}
+                replacements: { isbn }
             });
             const bookId = book_id_q[0]?.book_id;
             await db.query(
-                "INSERT INTO ownership (user_id, book_id, condition) VALUES (:u_id, :b_id, :condition)",
+                "INSERT INTO ownership (user_id, book_id, condition) VALUES (:user_id, :bookId, :condition)",
                 {
                     type: QueryTypes.INSERT,
-                    replacements: {u_id: user_id, b_id: bookId, condition: condition}
+                    replacements: { user_id, bookId, condition}
                 }
             );
             res.status(200).send("Book successfully added to ownership list");
@@ -266,10 +266,10 @@ const BookController = {
         const { isbn } = req.body;
         try {
             const book = await db.query(
-                "SELECT book_id FROM book WHERE isbn = :book_isbn",
+                "SELECT book_id FROM book WHERE isbn = :isbn",
                 {
                     type: QueryTypes.SELECT,
-                    replacements: {book_isbn: isbn}
+                    replacements: { isbn }
                 }
             );
             console.log(book)
@@ -278,10 +278,10 @@ const BookController = {
             }
             const bookId = book[0]?.book_id;
             const result = await db.query(
-                "DELETE FROM wanted WHERE user_id = :u_id AND book_id = :book_id",
+                "DELETE FROM wanted WHERE user_id = :user_id AND book_id = :bookId",
                 {
                     type: QueryTypes.DELETE,
-                    replacements: {u_id: user_id, book_id: bookId}
+                    replacements: { user_id, bookId }
                 }
             );
             if (result.rowCount === 0){
@@ -308,10 +308,10 @@ const BookController = {
         const { isbn } = req.body;
         try {
             const book = await db.query(
-                "SELECT book_id FROM book WHERE isbn = :book_isbn",
+                "SELECT book_id FROM book WHERE isbn = :isbn",
                 {
                     type: QueryTypes.SELECT,
-                    replacements: {book_isbn: isbn}
+                    replacements: { isbn }
                 }
             );
             if (!book) {
@@ -319,10 +319,10 @@ const BookController = {
             }
             const bookId = book[0]?.book_id;
             const result = await db.query(
-                "DELETE FROM ownership WHERE user_id = :u_id AND book_id = :book_id",
+                "DELETE FROM ownership WHERE user_id = :user_id AND book_id = :bookId",
                 {
                     type: QueryTypes.DELETE,
-                    replacements: {u_id: user_id, book_id: bookId}
+                    replacements: { user_id, bookId }
                 }
             );
             if (result.rowCount === 0){
