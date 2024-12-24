@@ -29,10 +29,10 @@ function loadExchange(data) {
   }
   data.forEach(user => {
     let wantedBooks = user.books_i_can_give;
-    const wantedHTML = getBooksHTML(wantedBooks, 'От вас ничего не нужно');
+    const wantedHTML = getBooksHTML(wantedBooks, 'Вам ничего не нужно');
 
     let ownBooks = user.books_i_can_receive;
-    const ownHTML = getBooksHTML(ownBooks, 'Вам ничего не нужно');
+    const ownHTML = getBooksHTML(ownBooks, 'От вас ничего не нужно');
 
     const userRow = document.createElement('div');
     userRow.className = 'row';
