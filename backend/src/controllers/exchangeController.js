@@ -104,7 +104,7 @@ const ExchangeController = {
         WHERE u.user_id != :user_id
         GROUP BY u.user_id, c.city_name, ctr.country_name, u.email, u.exchange_count
         ORDER BY u.nickname
-        ) AS exchange WHERE books_i_can_give IS NOT NULL books_i_can_receive IS NOT NULL
+        ) AS exchange WHERE books_i_can_give IS NOT NULL OR books_i_can_receive IS NOT NULL
         `,
         {
           type: QueryTypes.RAW,
